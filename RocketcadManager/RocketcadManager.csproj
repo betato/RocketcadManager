@@ -52,16 +52,16 @@
     <Compile Include="Assembly.cs" />
     <Compile Include="CadComponent.cs" />
     <Compile Include="Folder.cs" />
+    <Compile Include="Icons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Icons.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Icons.resx</DependentUpon>
     </Compile>
     <Compile Include="Part.cs" />
     <Compile Include="Program.cs" />
@@ -78,6 +78,7 @@
     <EmbeddedResource Include="Icons.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Icons.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -112,12 +113,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\imageres_84.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\imageres_98.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Error.png" />
   </ItemGroup>
   <ItemGroup>
@@ -130,13 +125,13 @@
     <None Include="Resources\Warning20.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Refresh21.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Open20.png" />
+    <None Include="Resources\OpenFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OpenFolder.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ErrorFile.png" />
@@ -151,16 +146,16 @@
     <None Include="Resources\Folder.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\WarningErrorFolder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WarningErrorFile.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\WarningFile.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\WarningFolder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\OpenFile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\OpenFolder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

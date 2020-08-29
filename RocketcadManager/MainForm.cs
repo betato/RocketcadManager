@@ -35,12 +35,15 @@ namespace RocketcadManager
             ConfigLoader.Open(out config);
             
             ImageList imageList = new ImageList();
+            imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.Images.Add("File", Icons.File);
             imageList.Images.Add("Folder", Icons.Folder);
             imageList.Images.Add("WarningFile", Icons.WarningFile);
             imageList.Images.Add("WarningFolder", Icons.WarningFolder);
             imageList.Images.Add("ErrorFile", Icons.ErrorFile);
             imageList.Images.Add("ErrorFolder", Icons.ErrorFolder);
+            imageList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
+            imageList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
             fileView.ImageList = imageList;
 
             LoadFiles();
@@ -58,7 +61,7 @@ namespace RocketcadManager
 
             foreach (string cadDir in config.CadDirectories)
             {
-                Folder cadFolder = new Folder(new DirectoryInfo(cadDir));
+                Folder cadFolder = new Folder(new DirectoryInfo(cadDir), null);
                 cadFolders.Add(cadFolder);
                 WalkDirectoryTree(cadFolder);
             }
@@ -110,13 +113,13 @@ namespace RocketcadManager
                     string name = fi.Name.ToLower();
                     if (extension == ".sldprt")
                     {
-                        Part newPart = new Part(fi);
+                        Part newPart = new Part(fi, rootFolder);
                         parts.Add(fi.FullName, newPart);
                         rootFolder.parts.Add(newPart);
                     }
                     else if (extension == ".sldasm")
                     {
-                        Assembly newAssembly = new Assembly(fi);
+                        Assembly newAssembly = new Assembly(fi, rootFolder);
                         assemblies.Add(fi.FullName, newAssembly);
                         rootFolder.assemblies.Add(newAssembly);
                     }
@@ -125,7 +128,7 @@ namespace RocketcadManager
                 {
                     if (dirInfo.Name == ".partstatus")
                         continue;
-                    Folder subFolder = new Folder(dirInfo);
+                    Folder subFolder = new Folder(dirInfo, rootFolder);
                     WalkDirectoryTree(subFolder);
                     // Only add non-empty folders
                     if (!subFolder.IsEmpty())
@@ -226,6 +229,7 @@ namespace RocketcadManager
             textBoxNotes.Text = "";
             textBoxStock.Text = "";
             textBoxRequired.Text = "";
+            textBoxDescription.Text = "";
             pictureBox1.Image = null;
             listView1.Items.Clear();
             listView2.Items.Clear();
@@ -373,9 +377,9 @@ namespace RocketcadManager
             {
                 System.Diagnostics.Process.Start(selectedPart.ComponentFileInfo.DirectoryName);
             }
-            else if (selectedPart != null)
+            else if (selectedAssembly != null)
             {
-                System.Diagnostics.Process.Start(selectedPart.ComponentFileInfo.DirectoryName);
+                System.Diagnostics.Process.Start(selectedAssembly.ComponentFileInfo.DirectoryName);
             }
             else if (selectedFolder != null)
             {

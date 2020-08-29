@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace RocketcadManager
         public List<Tuple<Assembly, int>> subAssemblies = new List<Tuple<Assembly, int>>();
         public List<Tuple<Part, int>> parts = new List<Tuple<Part, int>> ();
 
-        public Assembly(FileInfo fileInfo) : base(fileInfo)
+        public Assembly(FileInfo fileInfo, Folder parentFolder) : base(fileInfo, parentFolder)
         {
             HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out assemblyInfo);
             if (!HasInfo)
@@ -80,6 +81,12 @@ namespace RocketcadManager
                 thisNode.Nodes.Add(dependant.Item1.DependancyTree());
             }
             return thisNode;
+        }
+
+        public override bool NameOk()
+        {
+            // Assembly names must end with 00
+            return Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+00(\s.*)*\.(?i)SLDASM(?-i)$");
         }
     }
 }

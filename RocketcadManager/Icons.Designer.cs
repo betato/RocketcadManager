@@ -143,6 +143,26 @@ namespace RocketcadManager {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap WarningErrorFile {
+            get {
+                object obj = ResourceManager.GetObject("WarningErrorFile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningErrorFolder {
+            get {
+                object obj = ResourceManager.GetObject("WarningErrorFolder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WarningFile {
             get {
                 object obj = ResourceManager.GetObject("WarningFile", resourceCulture);

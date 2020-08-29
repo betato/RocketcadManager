@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,13 +13,15 @@ namespace RocketcadManager
     class Folder
     {
         public DirectoryInfo Path { get; set; }
+        public Folder ParentFolder { get; protected set; }
         public List<Folder> subFolders = new List<Folder>();
         public List<Assembly> assemblies = new List<Assembly>();
         public List<Part> parts = new List<Part>();
 
-        public Folder(DirectoryInfo di)
+        public Folder(DirectoryInfo di, Folder parentFolder)
         {
             Path = di;
+            ParentFolder = parentFolder;
         }
 
         public TreeNode DirectoryTree()
@@ -26,8 +29,17 @@ namespace RocketcadManager
             TreeNode thisNode = new TreeNode();
             thisNode.Tag = this;
             thisNode.Text = Path.Name;
-            thisNode.ImageKey = "Folder";
-            thisNode.SelectedImageKey = "Folder";
+
+            if (NameOk())
+            {
+                thisNode.ImageKey = "Folder";
+                thisNode.SelectedImageKey = "Folder";
+            }
+            else
+            {
+                thisNode.ImageKey = "WarningFolder";
+                thisNode.SelectedImageKey = "WarningFolder";
+            }
 
             foreach (Folder folder in subFolders)
             {
@@ -48,6 +60,11 @@ namespace RocketcadManager
         {
             // Contains no parts or assemblies
             return assemblies.Count <= 0 && parts.Count <= 0 && subFolders.Count <= 0;
+        }
+
+        public bool NameOk()
+        {
+            return Regex.IsMatch(Path.Name, @"^([0-9]{2}-)+[0-9]{2}($|\s)");
         }
     }
 }
