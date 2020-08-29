@@ -146,6 +146,7 @@ namespace RocketcadManager
         {
             textBoxNotes.Text = part.partInfo.Notes;
             textBoxStock.Text = part.partInfo.Stock.ToString();
+            textBoxDescription.Text = part.partInfo.Description;
 
             foreach (Tuple<Assembly, int> dependant in part.dependants)
             {
@@ -158,6 +159,7 @@ namespace RocketcadManager
         {
             textBoxNotes.Text = assembly.assemblyInfo.Notes;
             textBoxStock.Text = assembly.assemblyInfo.Stock.ToString();
+            textBoxDescription.Text = assembly.assemblyInfo.Description;
 
             foreach (Tuple<Assembly, int> dependant in assembly.dependants)
             {
@@ -283,6 +285,7 @@ namespace RocketcadManager
                 toolStripStatusLabel1.Text = "Saving";
                 selectedPart.partInfo.Notes = textBoxNotes.Text;
                 selectedPart.partInfo.Stock = int.Parse(textBoxStock.Text);
+                selectedPart.partInfo.Description = textBoxDescription.Text;
                 selectedPart.Save();
                 Console.WriteLine("Saved");
             }
@@ -291,6 +294,7 @@ namespace RocketcadManager
                 toolStripStatusLabel1.Text = "Saving";
                 selectedAssembly.assemblyInfo.Notes = textBoxNotes.Text;
                 selectedAssembly.assemblyInfo.Stock = int.Parse(textBoxStock.Text);
+                selectedAssembly.assemblyInfo.Description = textBoxDescription.Text;
                 selectedAssembly.Save();
                 Console.WriteLine("Saved");
             }
