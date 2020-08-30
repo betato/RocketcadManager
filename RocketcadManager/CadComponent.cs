@@ -18,6 +18,8 @@ namespace RocketcadManager
         public bool LoadingError { get; protected set; }
         public CadInfo CadInfo { get; protected set; }
 
+        public List<Tuple<Assembly, int>> dependants = new List<Tuple<Assembly, int>>();
+
         public CadComponent(FileInfo fileInfo, Folder parentFolder)
         {
             ComponentFileInfo = fileInfo;
@@ -58,6 +60,17 @@ namespace RocketcadManager
         public virtual bool NameOk()
         {
             return Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+[0-9]{2}(\s.*)*\.(?i)(SLDASM|SLDPRT)(?-i)$");
+        }
+
+        public TreeNode DependancyTree()
+        {
+            TreeNode thisNode = GetNode();
+            foreach (Tuple<Assembly, int> dependant in dependants)
+            {
+                // TODO: do something with the quantity
+                thisNode.Nodes.Add(dependant.Item1.DependancyTree());
+            }
+            return thisNode;
         }
 
         public abstract void Save();

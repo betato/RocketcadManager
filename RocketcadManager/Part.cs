@@ -14,7 +14,6 @@ namespace RocketcadManager
     class Part : CadComponent
     {
         public PartInfo partInfo;
-        public List<Tuple<Assembly, int>> dependants = new List<Tuple<Assembly, int>>();
 
         public Part(FileInfo fileInfo, Folder parentFolder) : base(fileInfo, parentFolder)
         {
@@ -27,17 +26,6 @@ namespace RocketcadManager
         public override void Save()
         {
             CadInfoLoader.SaveJson(ComponentFileInfo, partInfo);
-        }
-
-        public TreeNode DependancyTree()
-        {
-            TreeNode thisNode = GetNode();
-            foreach (Tuple<Assembly, int> dependant in dependants)
-            {
-                // TODO: do something with the quantity
-                thisNode.Nodes.Add(dependant.Item1.DependancyTree());
-            }
-            return thisNode;
         }
 
         public override bool NameOk()

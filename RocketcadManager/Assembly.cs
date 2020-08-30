@@ -14,7 +14,6 @@ namespace RocketcadManager
     class Assembly : CadComponent
     {
         public AssemblyInfo assemblyInfo;
-        public List<Tuple<Assembly, int>> dependants = new List<Tuple<Assembly, int>>();
         public List<Tuple<Assembly, int>> subAssemblies = new List<Tuple<Assembly, int>>();
         public List<Tuple<Part, int>> parts = new List<Tuple<Part, int>> ();
 
@@ -69,17 +68,6 @@ namespace RocketcadManager
             {
                 // TODO: do something with the quantity
                 thisNode.Nodes.Add(part.Item1.GetNode());
-            }
-            return thisNode;
-        }
-
-        public TreeNode DependancyTree()
-        {
-            TreeNode thisNode = GetNode();
-            foreach (Tuple<Assembly, int> dependant in dependants)
-            {
-                // TODO: do something with the quantity
-                thisNode.Nodes.Add(dependant.Item1.DependancyTree());
             }
             return thisNode;
         }
