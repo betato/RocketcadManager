@@ -158,17 +158,17 @@ namespace RocketcadManager
             foreach (Tuple<Assembly, int> dependant in assembly.dependants)
             {
                 string[] entry = { dependant.Item1.ComponentFileInfo.Name, dependant.Item2.ToString() };
-                listView1.Items.Add(new ListViewItem(entry));
+                listViewDependants.Items.Add(new ListViewItem(entry));
             }
             foreach (Tuple<Assembly, int> subAssembly in assembly.subAssemblies)
             {
                 string[] entry = { subAssembly.Item1.ComponentFileInfo.Name, subAssembly.Item2.ToString() };
-                listView2.Items.Add(new ListViewItem(entry));
+                listViewDependancies.Items.Add(new ListViewItem(entry));
             }
             foreach (Tuple<Part, int> part in assembly.parts)
             {
                 string[] entry = { part.Item1.ComponentFileInfo.Name, part.Item2.ToString() };
-                listView2.Items.Add(new ListViewItem(entry));
+                listViewDependancies.Items.Add(new ListViewItem(entry));
             }
         }
 
@@ -192,9 +192,13 @@ namespace RocketcadManager
                 // Display common part and assembly info
                 textBoxNotes.Text = selectedComponent.CadInfo.Notes;
                 textBoxDescription.Text = selectedComponent.CadInfo.Description;
+
                 numericStock.Value = selectedComponent.CadInfo.Stock;
-                numericRequired.Value = selectedComponent.CadInfo.AdditionalRequired;
-                numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
+
+                numericRequiredAssembly.Value = selectedComponent.UsageCount();
+                numericRequiredAdditional.Value = selectedComponent.CadInfo.AdditionalRequired;
+                numericRequiredTotal.Value = numericRequiredAssembly.Value + numericRequiredAdditional.Value;
+
                 OpenThumbnail(component.ComponentFileInfo);
 
                 // Display part-specific and assembly specific info
@@ -223,13 +227,13 @@ namespace RocketcadManager
             textBoxDescription.Clear();
 
             numericStock.Value = 0;
-            numericRequired.Value = 0;
+            numericRequiredAssembly.Value = 0;
             numericRequiredAdditional.Value = 0;
             numericRequiredTotal.Value = 0;
 
             pictureBox1.Image = null;
-            listView1.Items.Clear();
-            listView2.Items.Clear();
+            listViewDependants.Items.Clear();
+            listViewDependancies.Items.Clear();
         }
 
         private void EnableBoxes(bool enabled)
@@ -241,8 +245,8 @@ namespace RocketcadManager
             groupBoxStock.Enabled = enabled;
             groupBoxRequired.Enabled = enabled;
 
-            listView1.Enabled = enabled;
-            listView2.Enabled = enabled;
+            listViewDependants.Enabled = enabled;
+            listViewDependancies.Enabled = enabled;
 
             if (enabled)
             {
@@ -261,18 +265,15 @@ namespace RocketcadManager
 
             // Save previous selection
             SaveSelected();
+
             // Deselect old selection
             selectedComponent = null;
             selectedFolder = null;
 
             if (component.GetType() == typeof(Folder))
-            {
                 SelectFolder((Folder)component);
-            }
             else if (component is CadComponent)
-            {
                 SelectComponent((CadComponent)component);
-            }
         }
 
         private void textBoxStock_KeyPress(object sender, KeyPressEventArgs e)
@@ -394,7 +395,7 @@ namespace RocketcadManager
 
         private void numericRequiredAdditional_ValueChanged(object sender, EventArgs e)
         {
-            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
+            numericRequiredTotal.Value = numericRequiredAssembly.Value + numericRequiredAdditional.Value;
         }
     }
 }

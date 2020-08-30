@@ -62,6 +62,18 @@ namespace RocketcadManager
             return Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+[0-9]{2}(\s.*)*\.(?i)(SLDASM|SLDPRT)(?-i)$");
         }
 
+        public int UsageCount()
+        {
+            int count = 0;
+            foreach (Tuple<Assembly, int> dependant in dependants)
+            {
+                // Add dependancy and additional requirements
+                Assembly dependantAssem = dependant.Item1;
+                count += dependant.Item2 * (dependantAssem.UsageCount() + dependantAssem.CadInfo.AdditionalRequired);
+            }
+            return count;
+        }
+
         public TreeNode DependancyTree()
         {
             TreeNode thisNode = GetNode();
