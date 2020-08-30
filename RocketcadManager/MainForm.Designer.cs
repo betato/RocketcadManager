@@ -35,34 +35,41 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripOpenFolder = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripRefresh = new System.Windows.Forms.ToolStripButton();
-            this.toolStripWarnings = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSettings = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.listViewContainer = new System.Windows.Forms.SplitContainer();
             this.listView1 = new System.Windows.Forms.ListView();
             this.col1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.listView2 = new System.Windows.Forms.ListView();
             this.col3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Label4 = new System.Windows.Forms.Label();
+            this.LabelDescription = new System.Windows.Forms.Label();
             this.textBoxDescription = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelAssemblies = new System.Windows.Forms.Label();
             this.textBoxNotes = new System.Windows.Forms.TextBox();
-            this.textBoxStock = new System.Windows.Forms.TextBox();
-            this.textBoxRequired = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.toolStripOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripOpenFolder = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRefresh = new System.Windows.Forms.ToolStripButton();
+            this.toolStripWarnings = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSettings = new System.Windows.Forms.ToolStripButton();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LabelAdditional = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.numericRequired = new System.Windows.Forms.NumericUpDown();
+            this.numericRequiredAdditional = new System.Windows.Forms.NumericUpDown();
+            this.numericRequiredTotal = new System.Windows.Forms.NumericUpDown();
+            this.labelTotal = new System.Windows.Forms.Label();
+            this.groupBoxRequired = new System.Windows.Forms.GroupBox();
+            this.groupBoxStock = new System.Windows.Forms.GroupBox();
+            this.numericStock = new System.Windows.Forms.NumericUpDown();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -73,12 +80,21 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listViewContainer)).BeginInit();
+            this.listViewContainer.Panel1.SuspendLayout();
+            this.listViewContainer.Panel2.SuspendLayout();
+            this.listViewContainer.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequired)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequiredAdditional)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequiredTotal)).BeginInit();
+            this.groupBoxRequired.SuspendLayout();
+            this.groupBoxStock.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericStock)).BeginInit();
             this.SuspendLayout();
             // 
             // fileView
@@ -87,7 +103,7 @@
             this.fileView.HideSelection = false;
             this.fileView.Location = new System.Drawing.Point(0, 0);
             this.fileView.Name = "fileView";
-            this.fileView.Size = new System.Drawing.Size(350, 454);
+            this.fileView.Size = new System.Drawing.Size(354, 479);
             this.fileView.TabIndex = 0;
             this.fileView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.fileView_AfterSelect);
             this.fileView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.fileView_MouseDown);
@@ -98,9 +114,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1});
-            this.statusStrip.Location = new System.Drawing.Point(0, 479);
+            this.statusStrip.Location = new System.Drawing.Point(0, 504);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1050, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1064, 22);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -128,69 +144,19 @@
             this.toolStripSettings});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1050, 25);
+            this.toolStrip.Size = new System.Drawing.Size(1064, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
-            // 
-            // toolStripOpen
-            // 
-            this.toolStripOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripOpen.Enabled = false;
-            this.toolStripOpen.Image = global::RocketcadManager.Icons.OpenFile;
-            this.toolStripOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripOpen.Name = "toolStripOpen";
-            this.toolStripOpen.Size = new System.Drawing.Size(23, 22);
-            this.toolStripOpen.Text = "Open file";
-            this.toolStripOpen.Click += new System.EventHandler(this.toolStripOpen_Click);
-            // 
-            // toolStripOpenFolder
-            // 
-            this.toolStripOpenFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripOpenFolder.Image = global::RocketcadManager.Icons.OpenFolder;
-            this.toolStripOpenFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripOpenFolder.Name = "toolStripOpenFolder";
-            this.toolStripOpenFolder.Size = new System.Drawing.Size(23, 22);
-            this.toolStripOpenFolder.Text = "Open Containing Folder";
-            this.toolStripOpenFolder.Click += new System.EventHandler(this.toolStripOpenFolder_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripRefresh
-            // 
-            this.toolStripRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRefresh.Image")));
-            this.toolStripRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRefresh.Name = "toolStripRefresh";
-            this.toolStripRefresh.Size = new System.Drawing.Size(23, 22);
-            this.toolStripRefresh.Text = "Refresh";
-            this.toolStripRefresh.Click += new System.EventHandler(this.toolStripRefresh_Click);
-            // 
-            // toolStripWarnings
-            // 
-            this.toolStripWarnings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripWarnings.Image = global::RocketcadManager.Icons.Warnings;
-            this.toolStripWarnings.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripWarnings.Name = "toolStripWarnings";
-            this.toolStripWarnings.Size = new System.Drawing.Size(23, 22);
-            this.toolStripWarnings.Text = "Warnings and Errors";
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripSettings
-            // 
-            this.toolStripSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSettings.Image = global::RocketcadManager.Icons.Settings;
-            this.toolStripSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSettings.Name = "toolStripSettings";
-            this.toolStripSettings.Size = new System.Drawing.Size(23, 22);
-            this.toolStripSettings.Text = "Settings";
-            this.toolStripSettings.Click += new System.EventHandler(this.toolStripSettings_Click);
             // 
             // splitContainer1
             // 
@@ -205,8 +171,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1050, 454);
-            this.splitContainer1.SplitterDistance = 350;
+            this.splitContainer1.Size = new System.Drawing.Size(1064, 479);
+            this.splitContainer1.SplitterDistance = 354;
             this.splitContainer1.TabIndex = 3;
             // 
             // splitContainer2
@@ -217,40 +183,36 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Panel1.Controls.Add(this.listViewContainer);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.Label4);
+            this.splitContainer2.Panel2.Controls.Add(this.groupBoxStock);
+            this.splitContainer2.Panel2.Controls.Add(this.groupBoxRequired);
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer2.Panel2.Controls.Add(this.LabelDescription);
             this.splitContainer2.Panel2.Controls.Add(this.textBoxDescription);
-            this.splitContainer2.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer2.Panel2.Controls.Add(this.label1);
-            this.splitContainer2.Panel2.Controls.Add(this.label3);
-            this.splitContainer2.Panel2.Controls.Add(this.label2);
-            this.splitContainer2.Panel2.Controls.Add(this.textBoxNotes);
-            this.splitContainer2.Panel2.Controls.Add(this.textBoxStock);
-            this.splitContainer2.Panel2.Controls.Add(this.textBoxRequired);
-            this.splitContainer2.Size = new System.Drawing.Size(696, 454);
-            this.splitContainer2.SplitterDistance = 308;
+            this.splitContainer2.Size = new System.Drawing.Size(706, 479);
+            this.splitContainer2.SplitterDistance = 312;
             this.splitContainer2.TabIndex = 6;
             // 
-            // splitContainer3
+            // listViewContainer
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.listViewContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewContainer.Location = new System.Drawing.Point(0, 0);
+            this.listViewContainer.Name = "listViewContainer";
+            this.listViewContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer3.Panel1
+            // listViewContainer.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.listView1);
+            this.listViewContainer.Panel1.Controls.Add(this.listView1);
             // 
-            // splitContainer3.Panel2
+            // listViewContainer.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.listView2);
-            this.splitContainer3.Size = new System.Drawing.Size(308, 454);
-            this.splitContainer3.SplitterDistance = 232;
-            this.splitContainer3.TabIndex = 0;
+            this.listViewContainer.Panel2.Controls.Add(this.listView2);
+            this.listViewContainer.Size = new System.Drawing.Size(312, 479);
+            this.listViewContainer.SplitterDistance = 214;
+            this.listViewContainer.TabIndex = 0;
             // 
             // listView1
             // 
@@ -261,7 +223,7 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(308, 232);
+            this.listView1.Size = new System.Drawing.Size(312, 214);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -284,7 +246,7 @@
             this.listView2.HideSelection = false;
             this.listView2.Location = new System.Drawing.Point(0, 0);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(308, 218);
+            this.listView2.Size = new System.Drawing.Size(312, 261);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -299,93 +261,42 @@
             this.col4.Text = "Quantity";
             this.col4.Width = 100;
             // 
-            // Label4
+            // LabelDescription
             // 
-            this.Label4.AutoSize = true;
-            this.Label4.Location = new System.Drawing.Point(2, 78);
-            this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(60, 13);
-            this.Label4.TabIndex = 6;
-            this.Label4.Text = "Description";
+            this.LabelDescription.AutoSize = true;
+            this.LabelDescription.Location = new System.Drawing.Point(6, 6);
+            this.LabelDescription.Name = "LabelDescription";
+            this.LabelDescription.Size = new System.Drawing.Size(60, 13);
+            this.LabelDescription.TabIndex = 6;
+            this.LabelDescription.Text = "Description";
             // 
             // textBoxDescription
             // 
             this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDescription.Location = new System.Drawing.Point(3, 94);
+            this.textBoxDescription.Location = new System.Drawing.Point(72, 3);
             this.textBoxDescription.Name = "textBoxDescription";
-            this.textBoxDescription.Size = new System.Drawing.Size(379, 20);
+            this.textBoxDescription.Size = new System.Drawing.Size(300, 20);
             this.textBoxDescription.TabIndex = 7;
             // 
-            // pictureBox1
+            // labelAssemblies
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.pictureBox1.Location = new System.Drawing.Point(2, 204);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(379, 250);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Stock";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(2, 117);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Notes";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Required";
+            this.labelAssemblies.AutoSize = true;
+            this.labelAssemblies.Location = new System.Drawing.Point(6, 21);
+            this.labelAssemblies.Name = "labelAssemblies";
+            this.labelAssemblies.Size = new System.Drawing.Size(59, 13);
+            this.labelAssemblies.TabIndex = 1;
+            this.labelAssemblies.Text = "Assemblies";
             // 
             // textBoxNotes
             // 
-            this.textBoxNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxNotes.Location = new System.Drawing.Point(3, 133);
+            this.textBoxNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxNotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxNotes.Location = new System.Drawing.Point(3, 3);
             this.textBoxNotes.Multiline = true;
             this.textBoxNotes.Name = "textBoxNotes";
-            this.textBoxNotes.Size = new System.Drawing.Size(379, 65);
+            this.textBoxNotes.Size = new System.Drawing.Size(371, 257);
             this.textBoxNotes.TabIndex = 4;
-            // 
-            // textBoxStock
-            // 
-            this.textBoxStock.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStock.Location = new System.Drawing.Point(2, 16);
-            this.textBoxStock.Name = "textBoxStock";
-            this.textBoxStock.Size = new System.Drawing.Size(379, 20);
-            this.textBoxStock.TabIndex = 2;
-            this.textBoxStock.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxStock_KeyPress);
-            // 
-            // textBoxRequired
-            // 
-            this.textBoxRequired.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxRequired.Location = new System.Drawing.Point(2, 55);
-            this.textBoxRequired.Name = "textBoxRequired";
-            this.textBoxRequired.ReadOnly = true;
-            this.textBoxRequired.Size = new System.Drawing.Size(379, 20);
-            this.textBoxRequired.TabIndex = 3;
             // 
             // contextMenuStrip1
             // 
@@ -394,6 +305,67 @@
             this.openContainingFolderToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(202, 48);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(371, 257);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            // 
+            // toolStripOpen
+            // 
+            this.toolStripOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripOpen.Enabled = false;
+            this.toolStripOpen.Image = global::RocketcadManager.Icons.OpenFile;
+            this.toolStripOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripOpen.Name = "toolStripOpen";
+            this.toolStripOpen.Size = new System.Drawing.Size(23, 22);
+            this.toolStripOpen.Text = "Open file";
+            this.toolStripOpen.Click += new System.EventHandler(this.toolStripOpen_Click);
+            // 
+            // toolStripOpenFolder
+            // 
+            this.toolStripOpenFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripOpenFolder.Image = global::RocketcadManager.Icons.OpenFolder;
+            this.toolStripOpenFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripOpenFolder.Name = "toolStripOpenFolder";
+            this.toolStripOpenFolder.Size = new System.Drawing.Size(23, 22);
+            this.toolStripOpenFolder.Text = "Open Containing Folder";
+            this.toolStripOpenFolder.Click += new System.EventHandler(this.toolStripOpenFolder_Click);
+            // 
+            // toolStripRefresh
+            // 
+            this.toolStripRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRefresh.Image")));
+            this.toolStripRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRefresh.Name = "toolStripRefresh";
+            this.toolStripRefresh.Size = new System.Drawing.Size(23, 22);
+            this.toolStripRefresh.Text = "Refresh";
+            this.toolStripRefresh.Click += new System.EventHandler(this.toolStripRefresh_Click);
+            // 
+            // toolStripWarnings
+            // 
+            this.toolStripWarnings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripWarnings.Image = global::RocketcadManager.Icons.Warnings;
+            this.toolStripWarnings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripWarnings.Name = "toolStripWarnings";
+            this.toolStripWarnings.Size = new System.Drawing.Size(23, 22);
+            this.toolStripWarnings.Text = "Warnings and Errors";
+            // 
+            // toolStripSettings
+            // 
+            this.toolStripSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSettings.Image = global::RocketcadManager.Icons.Settings;
+            this.toolStripSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSettings.Name = "toolStripSettings";
+            this.toolStripSettings.Size = new System.Drawing.Size(23, 22);
+            this.toolStripSettings.Text = "Settings";
+            this.toolStripSettings.Click += new System.EventHandler(this.toolStripSettings_Click);
             // 
             // openFileToolStripMenuItem
             // 
@@ -411,11 +383,152 @@
             this.openContainingFolderToolStripMenuItem.Text = "Open Containing Folder";
             this.openContainingFolderToolStripMenuItem.Click += new System.EventHandler(this.openContainingFolderToolStripMenuItem_Click);
             // 
+            // LabelAdditional
+            // 
+            this.LabelAdditional.AutoSize = true;
+            this.LabelAdditional.Location = new System.Drawing.Point(6, 47);
+            this.LabelAdditional.Name = "LabelAdditional";
+            this.LabelAdditional.Size = new System.Drawing.Size(53, 13);
+            this.LabelAdditional.TabIndex = 8;
+            this.LabelAdditional.Text = "Additional";
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(2, 190);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(385, 289);
+            this.tabControl1.TabIndex = 2;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.pictureBox1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(377, 263);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Thumbnail";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.textBoxNotes);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(377, 263);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Notes";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // numericRequired
+            // 
+            this.numericRequired.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericRequired.Location = new System.Drawing.Point(70, 19);
+            this.numericRequired.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericRequired.Name = "numericRequired";
+            this.numericRequired.ReadOnly = true;
+            this.numericRequired.Size = new System.Drawing.Size(300, 20);
+            this.numericRequired.TabIndex = 10;
+            // 
+            // numericRequiredAdditional
+            // 
+            this.numericRequiredAdditional.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericRequiredAdditional.Location = new System.Drawing.Point(70, 45);
+            this.numericRequiredAdditional.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericRequiredAdditional.Name = "numericRequiredAdditional";
+            this.numericRequiredAdditional.Size = new System.Drawing.Size(300, 20);
+            this.numericRequiredAdditional.TabIndex = 11;
+            this.numericRequiredAdditional.ValueChanged += new System.EventHandler(this.numericRequiredAdditional_ValueChanged);
+            // 
+            // numericRequiredTotal
+            // 
+            this.numericRequiredTotal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericRequiredTotal.Location = new System.Drawing.Point(70, 71);
+            this.numericRequiredTotal.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericRequiredTotal.Name = "numericRequiredTotal";
+            this.numericRequiredTotal.ReadOnly = true;
+            this.numericRequiredTotal.Size = new System.Drawing.Size(300, 20);
+            this.numericRequiredTotal.TabIndex = 12;
+            // 
+            // labelTotal
+            // 
+            this.labelTotal.AutoSize = true;
+            this.labelTotal.Location = new System.Drawing.Point(6, 73);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(31, 13);
+            this.labelTotal.TabIndex = 14;
+            this.labelTotal.Text = "Total";
+            // 
+            // groupBoxRequired
+            // 
+            this.groupBoxRequired.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxRequired.Controls.Add(this.numericRequired);
+            this.groupBoxRequired.Controls.Add(this.numericRequiredAdditional);
+            this.groupBoxRequired.Controls.Add(this.labelTotal);
+            this.groupBoxRequired.Controls.Add(this.numericRequiredTotal);
+            this.groupBoxRequired.Controls.Add(this.LabelAdditional);
+            this.groupBoxRequired.Controls.Add(this.labelAssemblies);
+            this.groupBoxRequired.Location = new System.Drawing.Point(2, 84);
+            this.groupBoxRequired.Name = "groupBoxRequired";
+            this.groupBoxRequired.Size = new System.Drawing.Size(376, 100);
+            this.groupBoxRequired.TabIndex = 15;
+            this.groupBoxRequired.TabStop = false;
+            this.groupBoxRequired.Text = "Required";
+            // 
+            // groupBoxStock
+            // 
+            this.groupBoxStock.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxStock.Controls.Add(this.numericStock);
+            this.groupBoxStock.Location = new System.Drawing.Point(2, 29);
+            this.groupBoxStock.Name = "groupBoxStock";
+            this.groupBoxStock.Size = new System.Drawing.Size(376, 49);
+            this.groupBoxStock.TabIndex = 16;
+            this.groupBoxStock.TabStop = false;
+            this.groupBoxStock.Text = "In Stock";
+            // 
+            // numericStock
+            // 
+            this.numericStock.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericStock.Location = new System.Drawing.Point(70, 19);
+            this.numericStock.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericStock.Name = "numericStock";
+            this.numericStock.Size = new System.Drawing.Size(300, 20);
+            this.numericStock.TabIndex = 13;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1050, 501);
+            this.ClientSize = new System.Drawing.Size(1064, 526);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.statusStrip);
@@ -437,12 +550,23 @@
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.listViewContainer.Panel1.ResumeLayout(false);
+            this.listViewContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listViewContainer)).EndInit();
+            this.listViewContainer.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequired)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequiredAdditional)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericRequiredTotal)).EndInit();
+            this.groupBoxRequired.ResumeLayout(false);
+            this.groupBoxRequired.PerformLayout();
+            this.groupBoxStock.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericStock)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -455,14 +579,10 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxStock;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxRequired;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelAssemblies;
         private System.Windows.Forms.TextBox textBoxNotes;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer listViewContainer;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader col1;
         private System.Windows.Forms.ColumnHeader col2;
@@ -478,11 +598,22 @@
         private System.Windows.Forms.ToolStripButton toolStripOpenFolder;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
-        private System.Windows.Forms.Label Label4;
+        private System.Windows.Forms.Label LabelDescription;
         private System.Windows.Forms.TextBox textBoxDescription;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openContainingFolderToolStripMenuItem;
+        private System.Windows.Forms.Label LabelAdditional;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.NumericUpDown numericRequired;
+        private System.Windows.Forms.NumericUpDown numericRequiredTotal;
+        private System.Windows.Forms.NumericUpDown numericRequiredAdditional;
+        private System.Windows.Forms.GroupBox groupBoxStock;
+        private System.Windows.Forms.NumericUpDown numericStock;
+        private System.Windows.Forms.GroupBox groupBoxRequired;
+        private System.Windows.Forms.Label labelTotal;
     }
 }
 

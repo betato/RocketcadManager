@@ -148,8 +148,11 @@ namespace RocketcadManager
         private void DisplayPart(Part part)
         {
             textBoxNotes.Text = part.partInfo.Notes;
-            textBoxStock.Text = part.partInfo.Stock.ToString();
             textBoxDescription.Text = part.partInfo.Description;
+
+            numericStock.Value = part.partInfo.Stock;
+            numericRequired.Value = part.partInfo.AdditionalRequired;
+            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
 
             foreach (Tuple<Assembly, int> dependant in part.dependants)
             {
@@ -161,8 +164,11 @@ namespace RocketcadManager
         private void DisplayAssembly(Assembly assembly)
         {
             textBoxNotes.Text = assembly.assemblyInfo.Notes;
-            textBoxStock.Text = assembly.assemblyInfo.Stock.ToString();
             textBoxDescription.Text = assembly.assemblyInfo.Description;
+
+            numericStock.Value = assembly.assemblyInfo.Stock;
+            numericRequiredAdditional.Value = assembly.assemblyInfo.AdditionalRequired;
+            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
 
             foreach (Tuple<Assembly, int> dependant in assembly.dependants)
             {
@@ -226,10 +232,14 @@ namespace RocketcadManager
 
         private void ClearBoxes()
         {
-            textBoxNotes.Text = "";
-            textBoxStock.Text = "";
-            textBoxRequired.Text = "";
-            textBoxDescription.Text = "";
+            textBoxNotes.Clear();
+            textBoxDescription.Clear();
+
+            numericStock.Value = 0;
+            numericRequired.Value = 0;
+            numericRequiredAdditional.Value = 0;
+            numericRequiredTotal.Value = 0;
+
             pictureBox1.Image = null;
             listView1.Items.Clear();
             listView2.Items.Clear();
@@ -237,16 +247,25 @@ namespace RocketcadManager
 
         private void EnableBoxes(bool enabled)
         {
-            textBoxStock.Enabled = enabled;
-            textBoxRequired.Enabled = enabled;
+            LabelDescription.Enabled = enabled;
             textBoxNotes.Enabled = enabled;
             textBoxDescription.Enabled = enabled;
+
+            groupBoxStock.Enabled = enabled;
+            groupBoxRequired.Enabled = enabled;
 
             listView1.Enabled = enabled;
             listView2.Enabled = enabled;
 
-            if (enabled == false)
+            if (enabled)
+            {
+                //pictureBox1.BackColor = SystemColors.Window;
+            }
+            else
+            {
                 ClearBoxes();
+                //pictureBox1.BackColor = SystemColors.Control;
+            }
         }
 
         private void fileView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -288,7 +307,7 @@ namespace RocketcadManager
             {
                 toolStripStatusLabel1.Text = "Saving";
                 selectedPart.partInfo.Notes = textBoxNotes.Text;
-                selectedPart.partInfo.Stock = int.Parse(textBoxStock.Text);
+                selectedPart.partInfo.Stock = Convert.ToInt32(numericStock.Value);
                 selectedPart.partInfo.Description = textBoxDescription.Text;
                 selectedPart.Save();
                 Console.WriteLine("Saved");
@@ -297,7 +316,7 @@ namespace RocketcadManager
             {
                 toolStripStatusLabel1.Text = "Saving";
                 selectedAssembly.assemblyInfo.Notes = textBoxNotes.Text;
-                selectedAssembly.assemblyInfo.Stock = int.Parse(textBoxStock.Text);
+                selectedAssembly.assemblyInfo.Stock = Convert.ToInt32(numericStock.Value);
                 selectedAssembly.assemblyInfo.Description = textBoxDescription.Text;
                 selectedAssembly.Save();
                 Console.WriteLine("Saved");
@@ -405,6 +424,11 @@ namespace RocketcadManager
         private void toolStripOpenFolder_Click(object sender, EventArgs e)
         {
             OpenContainingFolder();
+        }
+
+        private void numericRequiredAdditional_ValueChanged(object sender, EventArgs e)
+        {
+            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
         }
     }
 }
