@@ -21,6 +21,7 @@ namespace RocketcadManager
             HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out partInfo);
             if (!HasInfo)
                 partInfo = new PartInfo();
+            CadInfo = partInfo;
         }
 
         public override void Save()

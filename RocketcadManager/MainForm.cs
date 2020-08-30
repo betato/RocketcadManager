@@ -26,8 +26,7 @@ namespace RocketcadManager
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
         private List<Folder>cadFolders = new List<Folder>();
 
-        private Assembly selectedAssembly = null;
-        private Part selectedPart = null;
+        private CadComponent selectedComponent = null;
         private Folder selectedFolder = null;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -147,13 +146,6 @@ namespace RocketcadManager
 
         private void DisplayPart(Part part)
         {
-            textBoxNotes.Text = part.partInfo.Notes;
-            textBoxDescription.Text = part.partInfo.Description;
-
-            numericStock.Value = part.partInfo.Stock;
-            numericRequired.Value = part.partInfo.AdditionalRequired;
-            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
-
             foreach (Tuple<Assembly, int> dependant in part.dependants)
             {
                 string[] entry = { dependant.Item1.ComponentFileInfo.Name, dependant.Item2.ToString() };
@@ -163,13 +155,6 @@ namespace RocketcadManager
 
         private void DisplayAssembly(Assembly assembly)
         {
-            textBoxNotes.Text = assembly.assemblyInfo.Notes;
-            textBoxDescription.Text = assembly.assemblyInfo.Description;
-
-            numericStock.Value = assembly.assemblyInfo.Stock;
-            numericRequiredAdditional.Value = assembly.assemblyInfo.AdditionalRequired;
-            numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
-
             foreach (Tuple<Assembly, int> dependant in assembly.dependants)
             {
                 string[] entry = { dependant.Item1.ComponentFileInfo.Name, dependant.Item2.ToString() };
@@ -198,24 +183,26 @@ namespace RocketcadManager
         private void SelectComponent(CadComponent component)
         {
             EnableFileOpen(true);
-
-            if (component.GetType() == typeof(Part))
-                selectedPart = (Part)component;
-            else if (component.GetType() == typeof(Assembly))
-                selectedAssembly = (Assembly)component;
-
+            selectedComponent = component;
+            
             if (component.HasInfo)
             {
                 ClearBoxes();
-                if (selectedPart != null)
-                {
-                    DisplayPart(selectedPart);
-                }
-                else if (selectedAssembly != null)
-                {
-                    DisplayAssembly(selectedAssembly);
-                }
+
+                // Display common part and assembly info
+                textBoxNotes.Text = selectedComponent.CadInfo.Notes;
+                textBoxDescription.Text = selectedComponent.CadInfo.Description;
+                numericStock.Value = selectedComponent.CadInfo.Stock;
+                numericRequired.Value = selectedComponent.CadInfo.AdditionalRequired;
+                numericRequiredTotal.Value = numericRequired.Value + numericRequiredAdditional.Value;
                 OpenThumbnail(component.ComponentFileInfo);
+
+                // Display part-specific and assembly specific info
+                if (component.GetType() == typeof(Part))
+                    DisplayPart((Part)component);
+                else if (component.GetType() == typeof(Assembly))
+                    DisplayAssembly((Assembly)component);
+
                 EnableBoxes(true);
             }
             else
@@ -275,8 +262,7 @@ namespace RocketcadManager
             // Save previous selection
             SaveSelected();
             // Deselect old selection
-            selectedPart = null;
-            selectedAssembly = null;
+            selectedComponent = null;
             selectedFolder = null;
 
             if (component.GetType() == typeof(Folder))
@@ -299,29 +285,18 @@ namespace RocketcadManager
 
         private void SaveSelected()
         {
-            if (selectedPart == null && selectedAssembly == null)
-                return;
-
             // TODO: Add text checking
-            if (selectedPart != null && selectedPart.HasInfo)
+            if (selectedComponent != null)
             {
                 toolStripStatusLabel1.Text = "Saving";
-                selectedPart.partInfo.Notes = textBoxNotes.Text;
-                selectedPart.partInfo.Stock = Convert.ToInt32(numericStock.Value);
-                selectedPart.partInfo.Description = textBoxDescription.Text;
-                selectedPart.Save();
+                selectedComponent.CadInfo.Notes = textBoxNotes.Text;
+                selectedComponent.CadInfo.Description = textBoxDescription.Text;
+                selectedComponent.CadInfo.Stock = Convert.ToInt32(numericStock.Value);
+                selectedComponent.CadInfo.AdditionalRequired = Convert.ToInt32(numericRequiredAdditional.Value);
+                selectedComponent.Save();
                 Console.WriteLine("Saved");
+                toolStripStatusLabel1.Text = "Ready";
             }
-            else if (selectedAssembly != null && selectedAssembly.HasInfo)
-            {
-                toolStripStatusLabel1.Text = "Saving";
-                selectedAssembly.assemblyInfo.Notes = textBoxNotes.Text;
-                selectedAssembly.assemblyInfo.Stock = Convert.ToInt32(numericStock.Value);
-                selectedAssembly.assemblyInfo.Description = textBoxDescription.Text;
-                selectedAssembly.Save();
-                Console.WriteLine("Saved");
-            }
-            toolStripStatusLabel1.Text = "Ready";
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -378,27 +353,18 @@ namespace RocketcadManager
             solidworksProcess.FileName = @"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SLDWORKS.exe";
             solidworksProcess.WindowStyle = ProcessWindowStyle.Minimized;
             
-            if (selectedPart != null)
+            if (selectedComponent != null)
             {
-                solidworksProcess.Arguments = selectedPart.ComponentFileInfo.FullName;
-                Process.Start(solidworksProcess);
-            }
-            else if (selectedAssembly != null)
-            {
-                solidworksProcess.Arguments = selectedAssembly.ComponentFileInfo.FullName;
+                solidworksProcess.Arguments = selectedComponent.ComponentFileInfo.FullName;
                 Process.Start(solidworksProcess);
             }
         }
 
         private void OpenContainingFolder()
         {
-            if (selectedPart != null)
+            if (selectedComponent != null)
             {
-                System.Diagnostics.Process.Start(selectedPart.ComponentFileInfo.DirectoryName);
-            }
-            else if (selectedAssembly != null)
-            {
-                System.Diagnostics.Process.Start(selectedAssembly.ComponentFileInfo.DirectoryName);
+                System.Diagnostics.Process.Start(selectedComponent.ComponentFileInfo.DirectoryName);
             }
             else if (selectedFolder != null)
             {

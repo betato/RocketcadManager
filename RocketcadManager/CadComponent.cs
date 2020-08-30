@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RocketcadManagerLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace RocketcadManager
         public Folder ParentFolder { get; protected set; }
         public bool HasInfo { get; protected set; }
         public bool LoadingError { get; protected set; }
+        public CadInfo CadInfo { get; protected set; }
 
         public CadComponent(FileInfo fileInfo, Folder parentFolder)
         {

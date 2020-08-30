@@ -23,6 +23,7 @@ namespace RocketcadManager
             HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out assemblyInfo);
             if (!HasInfo)
                 assemblyInfo = new AssemblyInfo();
+            CadInfo = assemblyInfo;
         }
 
         public void AddParts(Dictionary<string, Part> allParts, Dictionary<string, Assembly> allAssemblies)
