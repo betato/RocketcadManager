@@ -159,7 +159,7 @@ namespace RocketcadManager
             foreach (Tuple<Assembly, int> dependant in part.dependants)
             {
                 string[] entry = { dependant.Item1.ComponentFileInfo.Name, dependant.Item2.ToString() };
-                listView1.Items.Add(new ListViewItem(entry));
+                listViewDependants.Items.Add(new ListViewItem(entry));
             }
             ResizeListView(listViewDependants);
         }
