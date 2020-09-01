@@ -17,7 +17,17 @@ namespace RocketcadManager
     {
         public MainForm()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             InitializeComponent();
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            string logFile = LogWriter.Write("crash", new string[] { ex.StackTrace });
+            MessageBox.Show(ex.Message + (e.IsTerminating ? " The program will now close." : "") +
+                "\n\nStack trace written to: " + logFile, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private Config config;
@@ -217,6 +227,8 @@ namespace RocketcadManager
 
         private void OpenThumbnail(FileInfo cadFile)
         {
+            // TODO: Add error handling for inaccesible files
+            // TODO: Open images async
             if (CadInfoLoader.OpenImage(cadFile, out Image thumb))
                 pictureBox1.Image = thumb;
         }

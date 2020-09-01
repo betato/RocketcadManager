@@ -22,6 +22,8 @@ namespace RocketcadManagerPlugin
 
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             ConfigLoader.Open(out config);
 
             swApp = (SldWorks)ThisSW;
@@ -34,6 +36,12 @@ namespace RocketcadManagerPlugin
             swApp.FileCloseNotify += SwApp_FileCloseNotify;
 
             return true;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            LogWriter.Write("plugin-crash", new string[] { ex.StackTrace });
         }
 
         public bool DisconnectFromSW()
