@@ -161,6 +161,7 @@ namespace RocketcadManager
                 string[] entry = { dependant.Item1.ComponentFileInfo.Name, dependant.Item2.ToString() };
                 listView1.Items.Add(new ListViewItem(entry));
             }
+            ResizeListView(listViewDependants);
         }
 
         private void DisplayAssembly(Assembly assembly)
@@ -179,6 +180,20 @@ namespace RocketcadManager
             {
                 string[] entry = { part.Item1.ComponentFileInfo.Name, part.Item2.ToString() };
                 listViewDependancies.Items.Add(new ListViewItem(entry));
+            }
+            ResizeListView(listViewDependants);
+            ResizeListView(listViewDependancies);
+        }
+
+        private void ResizeListView(ListView listView)
+        {
+            if (listView.Items.Count > 0)
+            {
+                foreach (ColumnHeader column in listView.Columns)
+                {
+                    column.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                    column.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+                }
             }
         }
 
@@ -299,7 +314,7 @@ namespace RocketcadManager
         private void SaveSelected()
         {
             // TODO: Add text checking
-            if (selectedComponent != null)
+            if (selectedComponent != null && selectedComponent.HasInfo)
             {
                 toolStripStatusLabel1.Text = "Saving";
                 selectedComponent.CadInfo.Notes = textBoxNotes.Text;
@@ -320,11 +335,11 @@ namespace RocketcadManager
         private void toolStripSettings_Click(object sender, EventArgs e)
         {
             SettingsForm settingsWindow = new SettingsForm(config);
-            if(settingsWindow.ShowDialog(this) == DialogResult.OK)
+            if (settingsWindow.ShowDialog(this) == DialogResult.OK)
             {
                 ConfigLoader.Save(config);
                 LoadFiles();
-            }            
+            }
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
@@ -408,6 +423,15 @@ namespace RocketcadManager
         private void numericRequiredAdditional_ValueChanged(object sender, EventArgs e)
         {
             numericRequiredTotal.Value = numericRequiredAssembly.Value + numericRequiredAdditional.Value;
+        }
+
+        private void toolStripWarnings_Click(object sender, EventArgs e)
+        {
+            List<CadComponent> cadComponents = new List<CadComponent>();
+            cadComponents.AddRange(parts.Values.ToList());
+            cadComponents.AddRange(assemblies.Values.ToList());
+            WarningsListForm warningsList = new WarningsListForm(cadComponents);
+            warningsList.ShowDialog(this);
         }
     }
 }

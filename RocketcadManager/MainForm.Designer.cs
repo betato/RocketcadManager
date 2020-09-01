@@ -192,6 +192,7 @@
             this.toolStripWarnings.Name = "toolStripWarnings";
             this.toolStripWarnings.Size = new System.Drawing.Size(23, 22);
             this.toolStripWarnings.Text = "Warnings and Errors";
+            this.toolStripWarnings.Click += new System.EventHandler(this.toolStripWarnings_Click);
             // 
             // toolStripSeparator1
             // 
@@ -281,11 +282,12 @@
             // col1
             // 
             this.col1.Text = "Used By";
-            this.col1.Width = 112;
+            this.col1.Width = 100;
             // 
             // col2
             // 
             this.col2.Text = "Quantity";
+            this.col2.Width = 100;
             // 
             // listViewDependancies
             // 
@@ -304,7 +306,7 @@
             // col3
             // 
             this.col3.Text = "Uses";
-            this.col3.Width = 123;
+            this.col3.Width = 100;
             // 
             // col4
             // 
