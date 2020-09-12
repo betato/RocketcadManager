@@ -207,7 +207,9 @@ namespace RocketcadManager
 
         private void SelectComponent(CadComponent component)
         {
-            EnableFileOpen(true);
+            // TODO: Re-enable this when file opening works
+            //EnableFileOpen(true);
+
             selectedComponent = component;
             
             if (component.HasInfo)
@@ -377,6 +379,9 @@ namespace RocketcadManager
 
         private void OpenFile()
         {
+            // TODO: Open the file through the solidworks plugin
+
+            /*
             ProcessStartInfo solidworksProcess = new ProcessStartInfo();
             solidworksProcess.FileName = @"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SLDWORKS.exe";
             solidworksProcess.WindowStyle = ProcessWindowStyle.Minimized;
@@ -386,6 +391,7 @@ namespace RocketcadManager
                 solidworksProcess.Arguments = selectedComponent.ComponentFileInfo.FullName;
                 Process.Start(solidworksProcess);
             }
+            */
         }
 
         private void OpenContainingFolder()
