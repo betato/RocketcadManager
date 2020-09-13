@@ -19,6 +19,12 @@
 ; Variables
     Var StartMenuFolder
 
+;--------------------------------
+; Create desktop icon
+    Function createDesktopShortcut
+    CreateShortcut "$DESKTOP\RocketcadManager.lnk" "$INSTDIR\RocketcadManager.exe"
+    FunctionEnd
+
 ; --------------------------------
 ; Interface Settings
     !define MUI_ABORTWARNING
@@ -33,8 +39,15 @@
     !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\RocketcadManager" 
     !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
     
+    ; Desktop icon creation
+    !define MUI_FINISHPAGE_SHOWREADME ""
+    !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+    !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create Desktop Shortcut"
+    !define MUI_FINISHPAGE_SHOWREADME_FUNCTION createDesktopShortcut
+
     !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
     !insertmacro MUI_PAGE_INSTFILES
+    !insertmacro MUI_PAGE_FINISH
     !insertmacro MUI_UNPAGE_CONFIRM
     !insertmacro MUI_UNPAGE_INSTFILES
 
