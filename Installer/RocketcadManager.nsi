@@ -25,6 +25,12 @@
     CreateShortcut "$DESKTOP\RocketcadManager.lnk" "$INSTDIR\RocketcadManager.exe"
     FunctionEnd
 
+;--------------------------------
+; Launch app
+    Function launchApp
+    ExecShell "" "$INSTDIR\RocketcadManager.exe"
+    FunctionEnd
+
 ; --------------------------------
 ; Interface Settings
     !define MUI_ABORTWARNING
@@ -44,6 +50,11 @@
     !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
     !define MUI_FINISHPAGE_SHOWREADME_TEXT "Create Desktop Shortcut"
     !define MUI_FINISHPAGE_SHOWREADME_FUNCTION createDesktopShortcut
+
+    ; Launch after install option
+    !define MUI_FINISHPAGE_RUN
+    !define MUI_FINISHPAGE_RUN_TEXT "Launch Application"
+    !define MUI_FINISHPAGE_RUN_FUNCTION launchApp
 
     !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
     !insertmacro MUI_PAGE_INSTFILES
