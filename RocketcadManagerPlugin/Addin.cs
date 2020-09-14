@@ -174,7 +174,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                // TODO: Log error
+                LogWriter.Write("plugin-part-save-error", new string[] { e.StackTrace });
             }
         }
 
@@ -206,7 +206,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                // TODO: Log error
+                LogWriter.Write("plugin-assembly-save-error", new string[] { e.StackTrace });
             }
 
             foreach (object subcomponentObj in subcomponentsObj)
@@ -256,7 +256,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                // TODO: Log error
+                LogWriter.Write("plugin-assembly-save-error", new string[] { e.StackTrace });
             }
         }
 
