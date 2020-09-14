@@ -21,26 +21,18 @@ namespace RocketcadManagerLib
                 if (configFile.Exists)
                     config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFile.FullName));
             }
-            catch (Exception e)
+            catch (JsonException e)
             {
-                // TODO: Add log file
-                Console.WriteLine(e.Message);
+                // Json parsing error, overwrite the old file with the default config and log an error
+                LogWriter.Write("config-loader-error", new string[] { e.StackTrace });
+                Save(config);
             }
-           
         }
 
         public static void Save(Config config)
         {
-            try
-            {
-                configFile.Directory.Create();
-                File.WriteAllText(configFile.FullName, JsonConvert.SerializeObject(config));
-            }
-            catch (Exception e)
-            {
-                // TODO: Add log file
-                Console.WriteLine(e.Message);
-            }
+            configFile.Directory.Create();
+            File.WriteAllText(configFile.FullName, JsonConvert.SerializeObject(config));
         }
     }
 }
