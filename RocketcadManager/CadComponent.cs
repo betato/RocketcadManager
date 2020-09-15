@@ -14,8 +14,9 @@ namespace RocketcadManager
     {
         public FileInfo ComponentFileInfo { get; set; }
         public Folder ParentFolder { get; protected set; }
-        public bool HasInfo { get; protected set; }
-        public bool LoadingError { get; protected set; }
+        public bool HasInfo { get; protected set; } // No cad info file found
+        public bool LoadingError { get; protected set; } // Error reading cad info file
+        public bool MissingComponentError { get; protected set; } // Referenced components have invalid paths
         public CadInfo CadInfo { get; protected set; }
 
         public List<Tuple<Assembly, int>> dependants = new List<Tuple<Assembly, int>>();
@@ -33,7 +34,7 @@ namespace RocketcadManager
             thisNode.Text = ComponentFileInfo.Name;
             if (!NameOk())
             {
-                if (!HasInfo)
+                if (!HasInfo || MissingComponentError)
                 {
                     thisNode.ImageKey = "WarningErrorFile";
                     thisNode.SelectedImageKey = "WarningErrorFile";
@@ -44,7 +45,7 @@ namespace RocketcadManager
                     thisNode.SelectedImageKey = "WarningFile";
                 }
             }
-            else if (!HasInfo)
+            else if (!HasInfo || MissingComponentError)
             {
                 thisNode.ImageKey = "ErrorFile";
                 thisNode.SelectedImageKey = "ErrorFile";

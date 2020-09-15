@@ -25,7 +25,7 @@ namespace RocketcadManager
             CadInfo = assemblyInfo;
         }
 
-        public void AddParts(Dictionary<string, Part> allParts, Dictionary<string, Assembly> allAssemblies)
+        public void AddDependencies(Dictionary<string, Part> allParts, Dictionary<string, Assembly> allAssemblies)
         {
             if (!HasInfo)
                 return;
@@ -33,10 +33,24 @@ namespace RocketcadManager
             // Add parts and subassemblies
             foreach (KeyValuePair<string, int> partStr in assemblyInfo.Parts)
             {
-                // TODO: Verify that path is valid
+                string absolutePath;
+                try
+                {
+                    absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + partStr.Key);
+                }
+                catch (Exception)
+                {
+                    // Invalid path path in assemblyInfo file
+                    MissingComponentError = true;
+                    continue;
+                }
 
-                string absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + partStr.Key);
-                Part part = allParts[absolutePath];
+                if (!allParts.TryGetValue(absolutePath, out Part part))
+                {
+                    // Part with specified path not found
+                    MissingComponentError = true;
+                    continue;
+                }
 
                 // Add part to self and self to part dependants
                 parts.Add(new Tuple<Part, int>(part, partStr.Value));
@@ -44,10 +58,24 @@ namespace RocketcadManager
             }
             foreach (KeyValuePair<string, int> assemblyStr in assemblyInfo.SubAssemblies)
             {
-                // TODO: Verify that path is valid
+                string absolutePath;
+                try
+                {
+                    absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + assemblyStr.Key);
+                }
+                catch (Exception)
+                {
+                    // Invalid path path in assemblyInfo file
+                    MissingComponentError = true;
+                    continue;
+                }
 
-                string absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + assemblyStr.Key);
-                Assembly assembly = allAssemblies[absolutePath];
+                if (!allAssemblies.TryGetValue(absolutePath, out Assembly assembly))
+                {
+                    // Assembly with specified path not found
+                    MissingComponentError = true;
+                    continue;
+                }
 
                 // Add assembly to self and self to assembly dependants
                 subAssemblies.Add(new Tuple<Assembly, int>(assembly, assemblyStr.Value));

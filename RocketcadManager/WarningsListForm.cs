@@ -42,6 +42,11 @@ namespace RocketcadManager
                     entry[1] = "Naming violation";
                     listViewWarnings.Items.Add(new ListViewItem(entry));
                 }
+                if (cadComponent.MissingComponentError)
+                {
+                    entry[1] = "Referenced components not found";
+                    listViewWarnings.Items.Add(new ListViewItem(entry));
+                }
             }
             foreach (ColumnHeader column in listViewWarnings.Columns)
             {
