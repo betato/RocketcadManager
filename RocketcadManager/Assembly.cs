@@ -33,6 +33,8 @@ namespace RocketcadManager
             // Add parts and subassemblies
             foreach (KeyValuePair<string, int> partStr in assemblyInfo.Parts)
             {
+                // TODO: Verify that path is valid
+
                 string absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + partStr.Key);
                 Part part = allParts[absolutePath];
 
@@ -42,6 +44,8 @@ namespace RocketcadManager
             }
             foreach (KeyValuePair<string, int> assemblyStr in assemblyInfo.SubAssemblies)
             {
+                // TODO: Verify that path is valid
+
                 string absolutePath = Path.GetFullPath(ComponentFileInfo.DirectoryName + @"\" + assemblyStr.Key);
                 Assembly assembly = allAssemblies[absolutePath];
 

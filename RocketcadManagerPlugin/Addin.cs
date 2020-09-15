@@ -123,92 +123,114 @@ namespace RocketcadManagerPlugin
         #region SAVE_EVENTS
         private int Part_FileSaveNotify(string FileName)
         {
-            SavePartInfo(FileName);
-            SaveThumbnailImage(FileName);
+            SaveCadInfo(FileName);
             return 0;
         }
 
         private int Part_FileSaveAsNotify2(string FileName)
         {
-            SavePartInfo(FileName);
-            SaveThumbnailImage(FileName);
+            SaveCadInfo(FileName);
             return 0;
         }
 
         private int Assembly_FileSaveNotify(string FileName)
         {
-            SaveAssemblyInfo(FileName);
-            SaveThumbnailImage(FileName);
+            SaveCadInfo(FileName);
             return 0;
         }
 
         private int Assembly_FileSaveAsNotify2(string FileName)
         {
-            SaveAssemblyInfo(FileName);
-            SaveThumbnailImage(FileName);
+            SaveCadInfo(FileName);
             return 0;
         }
         #endregion
-        
-        private void SavePartInfo(string filename)
+
+        private void SaveCadInfo(string filename)
         {
             FileInfo file = new FileInfo(filename);
+            if (!FilePathGood(file))
+                return;
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
                 return;
-            if (!FilePathGood(file))
-                return;
             if (swModel.GetPathName() != filename)
-                return;
-            if (swModel.GetType() != 1)
-                return;
+            {
+                swApp.SendMsgToUser("Error! Path names do not match. " + 
+                    swModel.GetPathName() + " " + filename);
+            }
+            int modelType = swModel.GetType();
+            if (modelType != 1 && modelType != 2)
+                return; // Probably a drawing
 
-            PartDoc part = (PartDoc)swModel;
+            Image thumbnail = null;
+            PartInfo partInfo = null;
+            AssemblyInfo assemblyInfo = null;
             
             try
             {
-                if (!CadInfoLoader.OpenJson(file, out PartInfo partInfo))
-                    partInfo = new PartInfo();
-                CadInfoLoader.SaveJson(file, partInfo);
+                // Open cad info file if it exists
+                if (modelType == 1)
+                    CadInfoLoader.OpenJsonImage(file, out partInfo, out thumbnail);
+                else if (modelType == 2)
+                    CadInfoLoader.OpenJsonImage(file, out assemblyInfo, out thumbnail);
             }
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write("plugin-part-save-error", new string[] { e.StackTrace });
+                LogWriter.Write("plugin-cad-save-error", new string[] { e.StackTrace });
+            }
+
+            if (modelType == 1)
+            {
+                // Create a new PartInfo if one was not loaded
+                if (partInfo == null)
+                    partInfo = new PartInfo();
+                GetPartInfo(swModel, ref partInfo);
+            }
+            else if (modelType == 2)
+            {
+                // Create a new AssemblyInfo if one was not loaded
+                if (assemblyInfo == null)
+                    assemblyInfo = new AssemblyInfo();
+                GetAssemblyInfo(swModel, ref assemblyInfo);
+            }
+            thumbnail = GetThumbnailImage(filename);
+
+#if DEBUG
+            swApp.SendMsgToUser("Cad info saved");
+#endif
+
+            try
+            {
+                // Save cad file info with updated parts
+                if (modelType == 1)
+                    CadInfoLoader.SaveJsonImage(file, partInfo, thumbnail);
+                else if (modelType == 2)
+                    CadInfoLoader.SaveJsonImage(file, assemblyInfo, thumbnail);
+            }
+            catch (Exception e)
+            {
+                swApp.SendMsgToUser(e.Message);
+                LogWriter.Write("plugin-cad-save-error", new string[] { e.StackTrace });
             }
         }
 
-        private void SaveAssemblyInfo(string filename)
+        private bool GetPartInfo(ModelDoc2 swModel, ref PartInfo partInfo)
         {
-            FileInfo file = new FileInfo(filename);
-            ModelDoc2 swModel = swApp.ActiveDoc;
-            if (swModel == null)
-                return;
-            if (!FilePathGood(file))
-                return;
-            if (swModel.GetPathName() != filename)
-                return;
-            if (swModel.GetType() != 2)
-                return;
-            
+            PartDoc part = (PartDoc)swModel;
+            // TODO: Modify partInfo here
+
+            return true;
+        }
+
+        private bool GetAssemblyInfo(ModelDoc2 swModel, ref AssemblyInfo assemblyInfo)
+        {            
             AssemblyDoc assembly = (AssemblyDoc)swModel;
-            
             object[] subcomponentsObj = assembly.GetComponents(true);
             if (subcomponentsObj == null)
-                return;
-
-            AssemblyInfo assemblyInfo = new AssemblyInfo();
-            try
-            {
-                // Open assemblyInfo file if it exists
-                CadInfoLoader.OpenJson(file, out assemblyInfo);
-            }
-            catch (Exception e)
-            {
-                swApp.SendMsgToUser(e.Message);
-                LogWriter.Write("plugin-assembly-save-error", new string[] { e.StackTrace });
-            }
-
+                return false;
+            
             foreach (object subcomponentObj in subcomponentsObj)
             {
                 Component2 subcomponent = (Component2)subcomponentObj;
@@ -216,8 +238,8 @@ namespace RocketcadManagerPlugin
                 int subModelType = subModel.GetType();
 
                 // TODO: Eliminate paths that leave the GrabCAD directory
-                // TODO: Fix relative path math
-                Uri path1 = new Uri(file.FullName);
+                // TODO: Replace invalid subModel paths (they are invalid for broken references)
+                Uri path1 = new Uri(swModel.GetPathName());
                 Uri path2 = new Uri(subModel.GetPathName());
                 Uri diff = path1.MakeRelativeUri(path2);
                 // TODO: Fix this un-escaping. It's really ghetto
@@ -248,16 +270,7 @@ namespace RocketcadManagerPlugin
                 }
             }
 
-            // Save assembly info with updated parts
-            try
-            {
-                CadInfoLoader.SaveJson(file, assemblyInfo);
-            }
-            catch (Exception e)
-            {
-                swApp.SendMsgToUser(e.Message);
-                LogWriter.Write("plugin-assembly-save-error", new string[] { e.StackTrace });
-            }
+            return true;
         }
 
         private bool FilePathGood(FileInfo file)
@@ -275,20 +288,20 @@ namespace RocketcadManagerPlugin
             return false;
         }
 
-        private void SaveThumbnailImage(string filename)
+        private Image GetThumbnailImage(string filename)
         {
+            Image thumb = null;
             try
             {
                 object bitmapObj = swApp.GetPreviewBitmap(filename, "Default");
-
-                Image thumb = PictureDispConverter.Convert(bitmapObj);
-                CadInfoLoader.SaveImage(new FileInfo(filename), thumb);
+                thumb = PictureDispConverter.Convert(bitmapObj);
             }
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                // TODO: Log error
+                LogWriter.Write("plugin-image-save-error", new string[] { e.StackTrace });
             }
+            return thumb;
         }
 
         public class PictureDispConverter : AxHost
@@ -309,9 +322,13 @@ namespace RocketcadManagerPlugin
             string path = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
             RegistryKey Key = Registry.LocalMachine.CreateSubKey(path);
             Key.SetValue(null, 1);
+#if DEBUG
+            Key.SetValue("Title", "RocketcadManager DEBUG BUILD");
+#else
             Key.SetValue("Title", "RocketcadManager");
+#endif
             Key.SetValue("Description", "BOOM!");
-        } 
+        }
 
         [ComUnregisterFunction]
         private static void UnregisterAssembly(Type t)
