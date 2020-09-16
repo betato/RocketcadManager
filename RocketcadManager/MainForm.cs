@@ -56,19 +56,6 @@ namespace RocketcadManager
             fileView.ImageList = imageList;
 
             LoadFiles();
-
-            // Add files and folders to fileView
-            foreach (Folder cadFolder in cadFolders)
-            {
-                fileView.Nodes.Add(cadFolder.DirectoryTree());
-            }
-            // Expand top-level nodes
-            foreach (TreeNode node in fileView.Nodes)
-            {
-                node.Expand();
-            }
-
-            toolStripStatusLabel1.Text = "Ready";
         }
 
         private void LoadFiles()
@@ -92,6 +79,19 @@ namespace RocketcadManager
             {
                 assembly.AddDependencies(parts, assemblies);
             }
+
+            // Add files and folders to fileView
+            foreach (Folder cadFolder in cadFolders)
+            {
+                fileView.Nodes.Add(cadFolder.DirectoryTree());
+            }
+            // Expand top-level nodes
+            foreach (TreeNode node in fileView.Nodes)
+            {
+                node.Expand();
+            }
+
+            toolStripStatusLabel1.Text = "Ready";
         }
 
         private void WalkDirectoryTree(Folder rootFolder)
