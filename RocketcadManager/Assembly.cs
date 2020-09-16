@@ -19,10 +19,7 @@ namespace RocketcadManager
 
         public Assembly(FileInfo fileInfo, Folder parentFolder) : base(fileInfo, parentFolder)
         {
-            HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out assemblyInfo);
-            if (!HasInfo)
-                assemblyInfo = new AssemblyInfo();
-            CadInfo = assemblyInfo;
+            assemblyInfo = Load<AssemblyInfo>();
         }
 
         public void AddDependencies(Dictionary<string, Part> allParts, Dictionary<string, Assembly> allAssemblies)

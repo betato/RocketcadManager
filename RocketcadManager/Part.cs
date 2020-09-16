@@ -17,10 +17,7 @@ namespace RocketcadManager
 
         public Part(FileInfo fileInfo, Folder parentFolder) : base(fileInfo, parentFolder)
         {
-            HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out partInfo);
-            if (!HasInfo)
-                partInfo = new PartInfo();
-            CadInfo = partInfo;
+            partInfo = Load<PartInfo>();
         }
 
         public override void Save()

@@ -27,6 +27,25 @@ namespace RocketcadManager
             ParentFolder = parentFolder;
         }
 
+        public T Load<T>() where T : CadInfo, new()
+        {
+            T cadInfo = default(T);
+            try
+            {
+                HasInfo = CadInfoLoader.OpenJson(ComponentFileInfo, out cadInfo);
+            }
+            catch (Exception)
+            {
+                LoadingError = true;
+            }
+            
+            if (!HasInfo)
+                cadInfo = new T();
+
+            CadInfo = cadInfo;
+            return cadInfo;
+        }
+
         public TreeNode GetNode()
         {
             TreeNode thisNode = new TreeNode();
