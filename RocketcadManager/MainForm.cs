@@ -85,11 +85,8 @@ namespace RocketcadManager
             {
                 fileView.Nodes.Add(cadFolder.DirectoryTree());
             }
-            // Expand top-level nodes
-            foreach (TreeNode node in fileView.Nodes)
-            {
-                node.Expand();
-            }
+            // Expand nodes
+            config.LoadTreeViewExpansion(fileView.Nodes);
 
             toolStripStatusLabel1.Text = "Ready";
         }
@@ -309,14 +306,6 @@ namespace RocketcadManager
                 SelectComponent((CadComponent)component);
         }
 
-        private void textBoxStock_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
         private void SaveSelected()
         {
             // TODO: Add text checking
@@ -346,6 +335,7 @@ namespace RocketcadManager
             SettingsForm settingsWindow = new SettingsForm(config);
             if (settingsWindow.ShowDialog(this) == DialogResult.OK)
             {
+                config.SaveTreeViewExpansion(fileView.Nodes);
                 Config.Save(config);
                 LoadFiles();
             }
@@ -353,6 +343,7 @@ namespace RocketcadManager
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
         {
+            config.SaveTreeViewExpansion(fileView.Nodes);
             LoadFiles();
         }
 

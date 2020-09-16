@@ -30,7 +30,6 @@ namespace RocketcadManagerLib
         public static void Save(Config config)
         {
             ConstantPaths.ConfigFile.Directory.Create();
-            File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config));
             File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config, Formatting.Indented));
         }
 
@@ -67,19 +66,18 @@ namespace RocketcadManagerLib
 
         private FolderNode SaveTreeViewNodes(TreeNodeCollection treeNodes)
         {
+            // Add all nodes that are expanded or have expanded children
             FolderNode currentSibling = null;
             FolderNode firstSibling = null;
-            // Add all nodes that are expanded or have expanded children
             foreach (TreeNode treeNode in treeNodes)
             {
                 // For all sibling nodes in the collection
                 TreeNodeCollection subNodes = treeNode.Nodes;
                 if (subNodes.Count <= 0) 
-                    continue; // Node does not have children and is not expandable
+                    continue; // Node does not have children and is therefore not expandable
 
                 FolderNode childNode = SaveTreeViewNodes(subNodes);
-                // Add node if it is expanded
-                // Add node if it has a child (their last child will be expanded)
+                // Add a node if it is expanded or if it has a child (the last child will be expanded)
                 if (treeNode.IsExpanded || childNode != null)
                 {
                     if (firstSibling == null)
@@ -97,6 +95,32 @@ namespace RocketcadManagerLib
                 }
             }
             return firstSibling;
+        }
+        
+        public void LoadTreeViewExpansion(TreeNodeCollection treeNodes)
+        {
+            LoadTreeViewNodes(treeNodes, folderViewExpansion);
+        }
+
+        private void LoadTreeViewNodes(TreeNodeCollection treeNodes, FolderNode folderNode)
+        {
+            // Loop through all sibling nodes
+            while (folderNode != null)
+            {
+                // TODO: Don't reiterate over already expanded nodes
+                foreach (TreeNode treeNode in treeNodes)
+                {
+                    if (treeNode.Text == folderNode.Name)
+                    {
+                        if (folderNode.Expanded)
+                            treeNode.Expand();
+                        if (folderNode.child != null)
+                            LoadTreeViewNodes(treeNode.Nodes, folderNode.child);
+                        break;
+                    }
+                }
+                folderNode = folderNode.sibling;
+            }
         }
     }
 }
