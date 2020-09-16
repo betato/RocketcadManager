@@ -24,7 +24,7 @@ namespace RocketcadManagerLib
             catch (JsonException e)
             {
                 // Json parsing error, overwrite the old file with the default config and log an error
-                LogWriter.Write("config-loader-error", new string[] { e.StackTrace });
+                LogWriter.Write(LogType.ConfigLoaderError, new string[] { e.StackTrace });
                 Save(config);
             }
         }

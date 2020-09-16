@@ -16,10 +16,10 @@ namespace RocketcadManagerLib
         public override string ToString() { return Tag; }
         public static implicit operator string(LogType logType) { return logType.Tag; }
         
-        public static LogType ManagerCrash { get { return new LogType("crash-manager"); } }
-        public static LogType AddinCrash { get { return new LogType("crash-addin"); } }
-        public static LogType AddinSaveCadError { get { return new LogType("error-addin-save_cad"); } }
-        public static LogType AddinSaveImageError { get { return new LogType("error-addin-save_image"); } }
+        public static LogType ManagerCrash { get { return new LogType("manager-crash"); } }
+        public static LogType AddinCrash { get { return new LogType("addin-crash"); } }
+        public static LogType AddinSaveError { get { return new LogType("addin-save-error"); } }
+        public static LogType ConfigLoaderError { get { return new LogType("config-loader-error"); } }
     }
 
     public static class LogWriter

@@ -198,7 +198,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveCadError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
             }
 
             // Create anew PartInfo or AssemblyInfo if one was not loaded, then update the info
@@ -229,7 +229,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveCadError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
             }
 #if DEBUG
             swApp.SendMsgToUser("Saved!");
@@ -350,7 +350,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveImageError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
             }
             return thumb;
         }
