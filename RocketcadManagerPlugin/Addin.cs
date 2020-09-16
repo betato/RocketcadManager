@@ -23,27 +23,47 @@ namespace RocketcadManagerPlugin
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
             ConfigLoader.Open(out config);
+            
+            // Connect to SW
+            try
+            {
+                swApp = (SldWorks)ThisSW;
+                swApp.SetAddinCallbackInfo(0, this, Cookie);
+                sessionCookie = Cookie;
+            }
+            catch (Exception e)
+            {
+                // Can't show an error message here because sw is not connected
+                LogWriter.Write(LogType.AddinError, e.StackTrace);
+            }
 
-            swApp = (SldWorks)ThisSW;
-            swApp.SetAddinCallbackInfo(0, this, Cookie);
-            sessionCookie = Cookie;
-
-            swApp.FileOpenNotify2 += SwApp_FileOpenNotify2;
-            swApp.FileNewNotify2 += SwApp_FileNewNotify2;
-
-            swApp.FileCloseNotify += SwApp_FileCloseNotify;
-
+            // Register file open event handlers
+            try
+            {
+                swApp.FileOpenNotify2 += SwApp_FileOpenNotify2;
+                swApp.FileNewNotify2 += SwApp_FileNewNotify2;
+                swApp.FileCloseNotify += SwApp_FileCloseNotify;
+            }
+            catch (Exception e)
+            {
+                LogErrorWithMessage(LogType.AddinError, e);
+            }
             return true;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // TODO: Fix global error handling - Solidworks may catch errors before they are logged
-
+            // Solidworks might be catching errors before they are logged
+            // All possible errors should be caught locally
             Exception ex = (Exception)e.ExceptionObject;
             LogWriter.Write(LogType.AddinCrash, ex.StackTrace);
+        }
+
+        private void LogErrorWithMessage(LogType logType, Exception e)
+        {
+            string logLocation = LogWriter.Write(logType, e.StackTrace);
+            swApp.SendMsgToUser(string.Format("Error: {0}\nLog Saved to:\n{1}", e.Message, logLocation));
         }
 
         public bool DisconnectFromSW()
@@ -74,29 +94,43 @@ namespace RocketcadManagerPlugin
 
         private void RemovePartSaveEvent()
         {
+            // TODO: Remove part save events when files are closed (make this actually work)
+#if DEBUG
             swApp.SendMsgToUser("Removing");
-
+#endif
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
+            {
+                swApp.SendMsgToUser("Error! swModel is null");
                 return;
+            }
 
             swApp.SendMsgToUser("Removing save event for : " + swModel.GetTitle());
-
-            int modelType = swModel.GetType();
-            // 1:part 2:assembly 3:drawing
-            if (modelType == 1)
+            try
             {
-                PartDoc part = (PartDoc)swModel;
-                part.FileSaveNotify -= Part_FileSaveNotify;
-                part.FileSaveAsNotify2 -= Part_FileSaveAsNotify2;
-                swApp.SendMsgToUser("Removed part: " + swModel.GetTitle());
+                int modelType = swModel.GetType(); // 1:part 2:assembly 3:drawing
+                if (modelType == 1)
+                {
+                    PartDoc part = (PartDoc)swModel;
+                    part.FileSaveNotify -= Part_FileSaveNotify;
+                    part.FileSaveAsNotify2 -= Part_FileSaveAsNotify2;
+#if DEBUG
+                    swApp.SendMsgToUser("Removed part: " + swModel.GetTitle());
+#endif
+                }
+                else if (modelType == 2)
+                {
+                    AssemblyDoc assembly = (AssemblyDoc)swModel;
+                    assembly.FileSaveNotify -= Assembly_FileSaveNotify;
+                    assembly.FileSaveAsNotify2 -= Assembly_FileSaveAsNotify2;
+#if DEBUG
+                    swApp.SendMsgToUser("Removed assembly: " + swModel.GetTitle());
+#endif
+                }
             }
-            else if (modelType == 2)
+            catch (Exception e)
             {
-                AssemblyDoc assembly = (AssemblyDoc)swModel;
-                assembly.FileSaveNotify -= Assembly_FileSaveNotify;
-                assembly.FileSaveAsNotify2 -= Assembly_FileSaveAsNotify2;
-                swApp.SendMsgToUser("Removed assembly: " + swModel.GetTitle());
+                LogErrorWithMessage(LogType.AddinError, e);
             }
         }
 
@@ -104,22 +138,32 @@ namespace RocketcadManagerPlugin
         {
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
+            {
+                swApp.SendMsgToUser("Error! swModel is null");
                 return;
+            }
+
+            try
+            {
+                int modelType = swModel.GetType(); // 1:part 2:assembly 3:drawing
+                if (modelType == 1)
+                {
+                    PartDoc part = (PartDoc)swModel;
+                    part.FileSaveNotify += Part_FileSaveNotify;
+                    part.FileSaveAsNotify2 += Part_FileSaveAsNotify2;
+                }
+                else if (modelType == 2)
+                {
+                    AssemblyDoc assembly = (AssemblyDoc)swModel;
+                    assembly.FileSaveNotify += Assembly_FileSaveNotify;
+                    assembly.FileSaveAsNotify2 += Assembly_FileSaveAsNotify2;
+                }
+            }
+            catch (Exception e)
+            {
+                LogErrorWithMessage(LogType.AddinError, e);
+            }
             
-            int modelType = swModel.GetType();
-            // 1:part 2:assembly 3:drawing
-            if (modelType == 1)
-            {
-                PartDoc part = (PartDoc)swModel;
-                part.FileSaveNotify += Part_FileSaveNotify;
-                part.FileSaveAsNotify2 += Part_FileSaveAsNotify2;
-            }
-            else if (modelType == 2)
-            {
-                AssemblyDoc assembly = (AssemblyDoc)swModel;
-                assembly.FileSaveNotify += Assembly_FileSaveNotify;
-                assembly.FileSaveAsNotify2 += Assembly_FileSaveAsNotify2;
-            }
 #if DEBUG
             swApp.SendMsgToUser("Added part save event");
 #endif
@@ -193,22 +237,28 @@ namespace RocketcadManagerPlugin
             }
             catch (Exception e)
             {
-                swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
+                LogErrorWithMessage(LogType.AddinSaveError, e);
             }
 
-            // Create anew PartInfo or AssemblyInfo if one was not loaded, then update the info
-            if (modelType == 1)
+            // Create a new PartInfo or AssemblyInfo if one was not loaded, then update the info
+            try
             {
-                if (partInfo == null)
-                    partInfo = new PartInfo();
-                GetPartInfo(swModel, ref partInfo);
+                if (modelType == 1)
+                {
+                    if (partInfo == null)
+                        partInfo = new PartInfo();
+                    GetPartInfo(swModel, ref partInfo);
+                }
+                else if (modelType == 2)
+                {
+                    if (assemblyInfo == null)
+                        assemblyInfo = new AssemblyInfo();
+                    GetAssemblyInfo(swModel, ref assemblyInfo);
+                }
             }
-            else if (modelType == 2)
+            catch (Exception e)
             {
-                if (assemblyInfo == null)
-                    assemblyInfo = new AssemblyInfo();
-                GetAssemblyInfo(swModel, ref assemblyInfo);
+                LogErrorWithMessage(LogType.AddinSaveError, e);
             }
 
             // Get a new thumbnail image
@@ -224,8 +274,7 @@ namespace RocketcadManagerPlugin
             }
             catch (Exception e)
             {
-                swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
+                LogErrorWithMessage(LogType.AddinSaveError, e);
             }
 #if DEBUG
             swApp.SendMsgToUser("Saved!");
@@ -345,8 +394,7 @@ namespace RocketcadManagerPlugin
             }
             catch (Exception e)
             {
-                swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
+                LogErrorWithMessage(LogType.AddinSaveError, e);
             }
             return thumb;
         }
