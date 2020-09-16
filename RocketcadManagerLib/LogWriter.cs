@@ -18,6 +18,7 @@ namespace RocketcadManagerLib
         
         public static LogType ManagerCrash { get { return new LogType("manager-crash"); } }
         public static LogType AddinCrash { get { return new LogType("addin-crash"); } }
+        public static LogType AddinError { get { return new LogType("addin-error"); } }
         public static LogType AddinSaveError { get { return new LogType("addin-save-error"); } }
         public static LogType ConfigLoaderError { get { return new LogType("config-loader-error"); } }
     }
@@ -26,6 +27,11 @@ namespace RocketcadManagerLib
     {
         private static readonly DirectoryInfo logFolder = new DirectoryInfo(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\RocketcadManager\logs");
+
+        public static string Write(LogType logType, string message)
+        {
+            return Write(logType, new string[] { message });
+        }
 
         public static string Write(LogType logType, string[] message)
         {

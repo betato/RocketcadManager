@@ -43,7 +43,7 @@ namespace RocketcadManagerPlugin
             // TODO: Fix global error handling - Solidworks may catch errors before they are logged
 
             Exception ex = (Exception)e.ExceptionObject;
-            LogWriter.Write(LogType.AddinCrash, new string[] { ex.StackTrace });
+            LogWriter.Write(LogType.AddinCrash, ex.StackTrace);
         }
 
         public bool DisconnectFromSW()
@@ -178,10 +178,6 @@ namespace RocketcadManagerPlugin
             if (modelType != 1 && modelType != 2)
                 return; // Probably a drawing
 
-#if DEBUG
-            swApp.SendMsgToUser("Checks complete");
-#endif
-
             Image thumbnail = null;
             PartInfo partInfo = null;
             AssemblyInfo assemblyInfo = null;
@@ -198,7 +194,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
             }
 
             // Create anew PartInfo or AssemblyInfo if one was not loaded, then update the info
@@ -229,7 +225,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
             }
 #if DEBUG
             swApp.SendMsgToUser("Saved!");
@@ -350,7 +346,7 @@ namespace RocketcadManagerPlugin
             catch (Exception e)
             {
                 swApp.SendMsgToUser(e.Message);
-                LogWriter.Write(LogType.AddinSaveError, new string[] { e.StackTrace });
+                LogWriter.Write(LogType.AddinSaveError, e.StackTrace);
             }
             return thumb;
         }
