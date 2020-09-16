@@ -25,7 +25,7 @@ namespace RocketcadManager
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            string logFile = LogWriter.Write("crash", new string[] { ex.StackTrace });
+            string logFile = LogWriter.Write(LogType.ManagerCrash, new string[] { ex.StackTrace });
             MessageBox.Show(ex.Message + (e.IsTerminating ? " The program will now close." : "") +
                 "\n\nStack trace written to: " + logFile, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

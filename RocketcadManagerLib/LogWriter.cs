@@ -8,17 +8,32 @@ using System.Threading.Tasks;
 
 namespace RocketcadManagerLib
 {
+    public class LogType
+    {
+        private LogType(string tag) { Tag = tag; }
+        public string Tag { get; private set; }
+
+        public override string ToString() { return Tag; }
+        public static implicit operator string(LogType logType) { return logType.Tag; }
+        
+        public static LogType ManagerCrash { get { return new LogType("crash-manager"); } }
+        public static LogType AddinCrash { get { return new LogType("crash-addin"); } }
+        public static LogType AddinSaveCadError { get { return new LogType("error-addin-save_cad"); } }
+        public static LogType AddinSaveImageError { get { return new LogType("error-addin-save_image"); } }
+    }
+
     public static class LogWriter
     {
         private static readonly DirectoryInfo logFolder = new DirectoryInfo(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\RocketcadManager\logs");
 
-        public static string Write(string tag, string[] message)
+        public static string Write(LogType logType, string[] message)
         {
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
-            string namePrefix = Regex.Replace(tag, "[<>:\\\"/\\\\\\|\\?\\*\\t\\r\\n\\s]", "-");
+            if (Regex.IsMatch(logType, "[<>:\\\"/\\\\\\|\\?\\*\\t\\r\\n\\s]"))
+                throw new FormatException("Invalid characters in file name");
             logFolder.Create();
-            string logFile = logFolder.FullName + @"\" + namePrefix + "-" + timestamp + ".txt";
+            string logFile = logFolder.FullName + @"\" + logType + "-" + timestamp + ".txt";
             File.WriteAllLines(logFile, message);
             return logFile;
         }
