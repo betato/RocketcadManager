@@ -25,9 +25,6 @@ namespace RocketcadManagerLib
 
     public static class LogWriter
     {
-        private static readonly DirectoryInfo logFolder = new DirectoryInfo(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\RocketcadManager\logs");
-
         public static string Write(LogType logType, string message)
         {
             return Write(logType, new string[] { message });
@@ -38,8 +35,8 @@ namespace RocketcadManagerLib
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
             if (Regex.IsMatch(logType, "[<>:\\\"/\\\\\\|\\?\\*\\t\\r\\n\\s]"))
                 throw new FormatException("Invalid characters in file name");
-            logFolder.Create();
-            string logFile = logFolder.FullName + @"\" + logType + "-" + timestamp + ".txt";
+            ConstantPaths.LogDir.Create();
+            string logFile = ConstantPaths.LogDir.FullName + @"\" + logType + "-" + timestamp + ".txt";
             File.WriteAllLines(logFile, message);
             return logFile;
         }

@@ -55,6 +55,7 @@
     <Compile Include="CadInfoLoader.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigLoader.cs" />
+    <Compile Include="ConstantPaths.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="PartInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
