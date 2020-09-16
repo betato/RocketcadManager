@@ -23,7 +23,7 @@ namespace RocketcadManagerPlugin
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            ConfigLoader.Open(out config);
+            Config.Open(out config);
             
             // Connect to SW
             try

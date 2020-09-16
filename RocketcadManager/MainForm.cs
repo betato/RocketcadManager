@@ -41,7 +41,7 @@ namespace RocketcadManager
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ConfigLoader.Open(out config);
+            Config.Open(out config);
             
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -343,7 +343,7 @@ namespace RocketcadManager
             SettingsForm settingsWindow = new SettingsForm(config);
             if (settingsWindow.ShowDialog(this) == DialogResult.OK)
             {
-                ConfigLoader.Save(config);
+                Config.Save(config);
                 LoadFiles();
             }
         }
