@@ -54,17 +54,12 @@ namespace RocketcadManagerLib
             }
         }
 
-        public List<string> CadDirectories { get; set; }
+        public List<string> CadDirectories { get; set; } = new List<string>();
+        [JsonProperty]
         private FolderNode folderViewExpansion;
-
-        public Config()
-        {
-            CadDirectories = new List<string>();
-        }
 
         public void SaveTreeViewExpansion(TreeNodeCollection treeNodes)
         {
-
             folderViewExpansion = SaveTreeViewNodes(treeNodes);
         }
 
@@ -79,15 +74,15 @@ namespace RocketcadManagerLib
                 {
                     if (firstSibling == null)
                     {
-                        firstSibling = new FolderNode(treeNode.Name, treeNode.IsExpanded);
+                        firstSibling = new FolderNode(treeNode.Text, treeNode.IsExpanded);
                         currentSibling = firstSibling;
                     }
                     else
                     {
                         currentSibling.sibling = new FolderNode(treeNode.Name, treeNode.IsExpanded);
                         currentSibling = currentSibling.sibling;
-                        currentSibling.child = SaveTreeViewNodes(subNodes);
                     }
+                    currentSibling.child = SaveTreeViewNodes(subNodes);
                 }
             }
             return firstSibling;

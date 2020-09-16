@@ -336,6 +336,9 @@ namespace RocketcadManager
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSelected();
+            config.SaveTreeViewExpansion(fileView.Nodes);
+
+            Config.Save(config);
         }
 
         private void toolStripSettings_Click(object sender, EventArgs e)
