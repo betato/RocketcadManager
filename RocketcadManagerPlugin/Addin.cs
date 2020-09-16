@@ -40,6 +40,8 @@ namespace RocketcadManagerPlugin
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            // TODO: Fix global error handling - Solidworks may catch errors before they are logged
+
             Exception ex = (Exception)e.ExceptionObject;
             LogWriter.Write("plugin-crash", new string[] { ex.StackTrace });
         }
@@ -118,6 +120,9 @@ namespace RocketcadManagerPlugin
                 assembly.FileSaveNotify += Assembly_FileSaveNotify;
                 assembly.FileSaveAsNotify2 += Assembly_FileSaveAsNotify2;
             }
+#if DEBUG
+            swApp.SendMsgToUser("Added part save event");
+#endif
         }
 
         #region SAVE_EVENTS
@@ -148,28 +153,43 @@ namespace RocketcadManagerPlugin
 
         private void SaveCadInfo(string filename)
         {
-            FileInfo file = new FileInfo(filename);
-            if (!FilePathGood(file))
+#if DEBUG
+            swApp.SendMsgToUser("File save started");
+#endif
+            if (!FilePathGood(filename))
+            {
+                swApp.SendMsgToUser(string.Format("Error! Invalid file path. {0}", filename));
                 return;
+            }
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
+            {
+                swApp.SendMsgToUser("Error! swModel is null");
                 return;
+            }
             if (swModel.GetPathName() != filename)
             {
-                swApp.SendMsgToUser("Error! Path names do not match. " + 
-                    swModel.GetPathName() + " " + filename);
+                swApp.SendMsgToUser(
+                    string.Format("Error! Path names do not match. {0} {1}", 
+                    swModel.GetPathName(), filename));
+                return;
             }
             int modelType = swModel.GetType();
             if (modelType != 1 && modelType != 2)
                 return; // Probably a drawing
 
+#if DEBUG
+            swApp.SendMsgToUser("Checks complete");
+#endif
+
             Image thumbnail = null;
             PartInfo partInfo = null;
             AssemblyInfo assemblyInfo = null;
-            
+            FileInfo file = new FileInfo(filename);
+
+            // Load existing cad info file if it exists
             try
             {
-                // Open cad info file if it exists
                 if (modelType == 1)
                     CadInfoLoader.OpenJsonImage(file, out partInfo, out thumbnail);
                 else if (modelType == 2)
@@ -181,29 +201,26 @@ namespace RocketcadManagerPlugin
                 LogWriter.Write("plugin-cad-save-error", new string[] { e.StackTrace });
             }
 
+            // Create anew PartInfo or AssemblyInfo if one was not loaded, then update the info
             if (modelType == 1)
             {
-                // Create a new PartInfo if one was not loaded
                 if (partInfo == null)
                     partInfo = new PartInfo();
                 GetPartInfo(swModel, ref partInfo);
             }
             else if (modelType == 2)
             {
-                // Create a new AssemblyInfo if one was not loaded
                 if (assemblyInfo == null)
                     assemblyInfo = new AssemblyInfo();
                 GetAssemblyInfo(swModel, ref assemblyInfo);
             }
+
+            // Get a new thumbnail image
             thumbnail = GetThumbnailImage(filename);
 
-#if DEBUG
-            swApp.SendMsgToUser("Cad info saved");
-#endif
-
+            // Save the cad info file info with updated parts
             try
             {
-                // Save cad file info with updated parts
                 if (modelType == 1)
                     CadInfoLoader.SaveJsonImage(file, partInfo, thumbnail);
                 else if (modelType == 2)
@@ -214,6 +231,9 @@ namespace RocketcadManagerPlugin
                 swApp.SendMsgToUser(e.Message);
                 LogWriter.Write("plugin-cad-save-error", new string[] { e.StackTrace });
             }
+#if DEBUG
+            swApp.SendMsgToUser("Saved!");
+#endif
         }
 
         private bool GetPartInfo(ModelDoc2 swModel, ref PartInfo partInfo)
@@ -225,60 +245,91 @@ namespace RocketcadManagerPlugin
         }
 
         private bool GetAssemblyInfo(ModelDoc2 swModel, ref AssemblyInfo assemblyInfo)
-        {            
+        {
             AssemblyDoc assembly = (AssemblyDoc)swModel;
             object[] subcomponentsObj = assembly.GetComponents(true);
             if (subcomponentsObj == null)
                 return false;
-            
+
+            // Add referenced arts and subassemblies with absolute paths
+            Dictionary<string, int> parts = new Dictionary<string, int>();
+            Dictionary<string, int> subAssemblies = new Dictionary<string, int>();
+            string parentPath = swModel.GetPathName();
             foreach (object subcomponentObj in subcomponentsObj)
             {
                 Component2 subcomponent = (Component2)subcomponentObj;
                 ModelDoc2 subModel = subcomponent.GetModelDoc2();
                 int subModelType = subModel.GetType();
-
-                // TODO: Eliminate paths that leave the GrabCAD directory
-                // TODO: Replace invalid subModel paths (they are invalid for broken references)
-                Uri path1 = new Uri(swModel.GetPathName());
-                Uri path2 = new Uri(subModel.GetPathName());
-                Uri diff = path1.MakeRelativeUri(path2);
-                // TODO: Fix this un-escaping. It's really ghetto
-                string relativePath = diff.OriginalString.Replace("%20", " ");
-
+                string subModelPath = subModel.GetPathName();
                 int count;
+
                 if (subModelType == 1) // Part
                 {
-                    if (assemblyInfo.Parts.TryGetValue(relativePath, out count))
-                    {
-                        assemblyInfo.Parts[relativePath] = count + 1;
-                    }
+                    if (parts.TryGetValue(subModelPath, out count))
+                        parts[subModelPath] = count + 1;
                     else
-                    {
-                        assemblyInfo.Parts.Add(relativePath, 1);
-                    }
+                        parts.Add(subModelPath, 1);
                 }
                 else if (subModelType == 2) // Assembly
                 {
-                    if (assemblyInfo.SubAssemblies.TryGetValue(relativePath, out count))
-                    {
-                        assemblyInfo.SubAssemblies[relativePath] = count + 1;
-                    }
+                    if (subAssemblies.TryGetValue(subModelPath, out count))
+                        subAssemblies[subModelPath] = count + 1;
                     else
-                    {
-                        assemblyInfo.SubAssemblies.Add(relativePath, 1);
-                    }
+                        subAssemblies.Add(subModelPath, 1);
                 }
+            }
+
+            // Make paths relative to this assembly and replace invalid paths
+            assemblyInfo.Parts.Clear();
+            int invalidPartCount = 0;
+            foreach (string partPath in parts.Keys)
+            {
+                string relativePath;
+                if (FilePathGood(partPath))
+                    relativePath = GetRelativePath(parentPath, partPath);
+                else
+                    // TODO: Store INVALID_PART_REF_{0} and INVALID_ASSEMBLY_REF_{0} as constants in the library
+                    relativePath = string.Format("INVALID_PART_REF_{0}", invalidPartCount++);
+                assemblyInfo.Parts.Add(relativePath, parts[partPath]);
+            }
+            assemblyInfo.SubAssemblies.Clear();
+            int invalidAssemblyCount = 0;
+            foreach (string subAssemblyPath in subAssemblies.Keys)
+            {
+                string relativePath;
+                if (FilePathGood(subAssemblyPath))
+                    relativePath = GetRelativePath(parentPath, subAssemblyPath);
+                else
+                    relativePath = string.Format("INVALID_ASSEMBLY_REF_{0}", invalidAssemblyCount++);
+                assemblyInfo.SubAssemblies.Add(relativePath, subAssemblies[subAssemblyPath]);
             }
 
             return true;
         }
 
-        private bool FilePathGood(FileInfo file)
+        private string GetRelativePath(string parentPath, string childPath)
         {
-            if (!file.Exists)
+            Uri parentPathUri = new Uri(parentPath);
+            Uri childPathURI = new Uri(childPath);
+            Uri diff = parentPathUri.MakeRelativeUri(childPathURI);
+            // TODO: Fix this un-escaping. It's really ghetto
+            return diff.OriginalString.Replace("%20", " ");
+        }
+
+        private bool FilePathGood(string filePath)
+        {
+            try
+            {
+                if (!File.Exists(filePath))
+                    return false;
+            }
+            catch (Exception)
+            {
+                // Not a valid path
                 return false;
+            }
             // Make sure file is contained in a designated CAD directory
-            Uri child = new Uri(file.FullName);
+            Uri child = new Uri(filePath);
             foreach (string cadDirectory in config.CadDirectories)
             {
                 Uri parent = new Uri(cadDirectory);
@@ -324,10 +375,11 @@ namespace RocketcadManagerPlugin
             Key.SetValue(null, 1);
 #if DEBUG
             Key.SetValue("Title", "RocketcadManager DEBUG BUILD");
+            Key.SetValue("Description", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
 #else
             Key.SetValue("Title", "RocketcadManager");
-#endif
             Key.SetValue("Description", "BOOM!");
+#endif
         }
 
         [ComUnregisterFunction]
