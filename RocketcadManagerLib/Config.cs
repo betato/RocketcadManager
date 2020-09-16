@@ -31,6 +31,7 @@ namespace RocketcadManagerLib
         {
             ConstantPaths.ConfigFile.Directory.Create();
             File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config));
+            File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config, Formatting.Indented));
         }
 
         private class FolderNode
@@ -41,10 +42,11 @@ namespace RocketcadManagerLib
             public string Name { get; private set; }
             public bool Expanded { get; private set; }
 
-            public FolderNode(string name, bool expanded)
+            public FolderNode(string name, bool expanded, FolderNode child)
             {
                 Name = name;
                 Expanded = expanded;
+                this.child = child;
             }
 
             public void Clear()
@@ -65,24 +67,33 @@ namespace RocketcadManagerLib
 
         private FolderNode SaveTreeViewNodes(TreeNodeCollection treeNodes)
         {
-            FolderNode firstSibling = null;
             FolderNode currentSibling = null;
+            FolderNode firstSibling = null;
+            // Add all nodes that are expanded or have expanded children
             foreach (TreeNode treeNode in treeNodes)
             {
+                // For all sibling nodes in the collection
                 TreeNodeCollection subNodes = treeNode.Nodes;
-                if (subNodes.Count > 0) // Node has children and is expandable
+                if (subNodes.Count <= 0) 
+                    continue; // Node does not have children and is not expandable
+
+                FolderNode childNode = SaveTreeViewNodes(subNodes);
+                // Add node if it is expanded
+                // Add node if it has a child (their last child will be expanded)
+                if (treeNode.IsExpanded || childNode != null)
                 {
                     if (firstSibling == null)
                     {
-                        firstSibling = new FolderNode(treeNode.Text, treeNode.IsExpanded);
-                        currentSibling = firstSibling;
+                        // Set first sibling
+                        currentSibling = new FolderNode(treeNode.Text, treeNode.IsExpanded, childNode);
+                        firstSibling = currentSibling;
                     }
                     else
                     {
-                        currentSibling.sibling = new FolderNode(treeNode.Name, treeNode.IsExpanded);
+                        // Set next sibling
+                        currentSibling.sibling = new FolderNode(treeNode.Text, treeNode.IsExpanded, childNode);
                         currentSibling = currentSibling.sibling;
                     }
-                    currentSibling.child = SaveTreeViewNodes(subNodes);
                 }
             }
             return firstSibling;
