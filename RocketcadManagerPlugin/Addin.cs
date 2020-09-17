@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows.Forms;
+using SolidWorks.Interop.swconst;
 
 namespace RocketcadManagerPlugin
 {
@@ -63,7 +64,8 @@ namespace RocketcadManagerPlugin
         private void LogErrorWithMessage(LogType logType, Exception e)
         {
             string logLocation = LogWriter.Write(logType, e.StackTrace);
-            swApp.SendMsgToUser(string.Format("Error: {0}\nLog Saved to:\n{1}", e.Message, logLocation));
+            swApp.SendMsgToUser2(string.Format("Error: {0}\nLog Saved to:\n{1}", e.Message, logLocation), 
+                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
         }
 
         public bool DisconnectFromSW()
@@ -96,16 +98,20 @@ namespace RocketcadManagerPlugin
         {
             // TODO: Remove part save events when files are closed (make this actually work)
 #if DEBUG
-            swApp.SendMsgToUser("Removing");
+            swApp.SendMsgToUser2("Removing",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
             {
-                swApp.SendMsgToUser("Error! swModel is null");
+                swApp.SendMsgToUser2("Error! swModel is null",
+                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
                 return;
             }
 
-            swApp.SendMsgToUser("Removing save event for : " + swModel.GetTitle());
+            swApp.SendMsgToUser2("Removing save event for : " + swModel.GetTitle(),
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
+
             try
             {
                 int modelType = swModel.GetType(); // 1:part 2:assembly 3:drawing
@@ -115,7 +121,8 @@ namespace RocketcadManagerPlugin
                     part.FileSaveNotify -= Part_FileSaveNotify;
                     part.FileSaveAsNotify2 -= Part_FileSaveAsNotify2;
 #if DEBUG
-                    swApp.SendMsgToUser("Removed part: " + swModel.GetTitle());
+                    swApp.SendMsgToUser2("Removed part: " + swModel.GetTitle(),
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
                 }
                 else if (modelType == 2)
@@ -124,7 +131,8 @@ namespace RocketcadManagerPlugin
                     assembly.FileSaveNotify -= Assembly_FileSaveNotify;
                     assembly.FileSaveAsNotify2 -= Assembly_FileSaveAsNotify2;
 #if DEBUG
-                    swApp.SendMsgToUser("Removed assembly: " + swModel.GetTitle());
+                    swApp.SendMsgToUser2("Removed assembly: " + swModel.GetTitle(),
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
                 }
             }
@@ -139,7 +147,8 @@ namespace RocketcadManagerPlugin
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
             {
-                swApp.SendMsgToUser("Error! swModel is null");
+                swApp.SendMsgToUser2("Error! swModel is null",
+                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
                 return;
             }
 
@@ -165,7 +174,8 @@ namespace RocketcadManagerPlugin
             }
             
 #if DEBUG
-            swApp.SendMsgToUser("Added part save event");
+            swApp.SendMsgToUser2("Added part save event",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
         }
 
@@ -198,24 +208,28 @@ namespace RocketcadManagerPlugin
         private void SaveCadInfo(string filename)
         {
 #if DEBUG
-            swApp.SendMsgToUser("File save started");
+            swApp.SendMsgToUser2("File save started",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
             if (!FilePathGood(filename))
             {
-                swApp.SendMsgToUser(string.Format("Error! Invalid file path. {0}", filename));
+                swApp.SendMsgToUser2(string.Format("Error! Invalid file path. {0}", filename),
+                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
                 return;
             }
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
             {
-                swApp.SendMsgToUser("Error! swModel is null");
+                swApp.SendMsgToUser2("Error! swModel is null",
+                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
                 return;
             }
             if (swModel.GetPathName() != filename)
             {
-                swApp.SendMsgToUser(
+                swApp.SendMsgToUser2(
                     string.Format("Error! Path names do not match. {0} {1}", 
-                    swModel.GetPathName(), filename));
+                    swModel.GetPathName(), filename), (int)swMessageBoxIcon_e.swMbStop, 
+                    (int)swMessageBoxBtn_e.swMbOk);
                 return;
             }
             int modelType = swModel.GetType();
@@ -248,12 +262,14 @@ namespace RocketcadManagerPlugin
                     if (partInfo == null)
                         partInfo = new PartInfo();
                     GetPartInfo(swModel, ref partInfo);
+                    partInfo.Description = resolvedVal;
                 }
                 else if (modelType == 2)
                 {
                     if (assemblyInfo == null)
                         assemblyInfo = new AssemblyInfo();
                     GetAssemblyInfo(swModel, ref assemblyInfo);
+                    assemblyInfo.Description = resolvedVal;
                 }
             }
             catch (Exception e)
@@ -277,7 +293,8 @@ namespace RocketcadManagerPlugin
                 LogErrorWithMessage(LogType.AddinSaveError, e);
             }
 #if DEBUG
-            swApp.SendMsgToUser("Saved!");
+            swApp.SendMsgToUser2("Saved!",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
         }
 
