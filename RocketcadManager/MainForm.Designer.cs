@@ -509,6 +509,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDescription.Location = new System.Drawing.Point(72, 3);
             this.textBoxDescription.Name = "textBoxDescription";
+            this.textBoxDescription.ReadOnly = true;
             this.textBoxDescription.Size = new System.Drawing.Size(300, 20);
             this.textBoxDescription.TabIndex = 7;
             // 

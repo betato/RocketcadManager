@@ -317,7 +317,6 @@ namespace RocketcadManager
             {
                 toolStripStatusLabel1.Text = "Saving";
                 selectedComponent.CadInfo.Notes = textBoxNotes.Text;
-                selectedComponent.CadInfo.Description = textBoxDescription.Text;
                 selectedComponent.CadInfo.Stock = Convert.ToInt32(numericStock.Value);
                 selectedComponent.CadInfo.AdditionalRequired = Convert.ToInt32(numericRequiredAdditional.Value);
                 selectedComponent.Save();
