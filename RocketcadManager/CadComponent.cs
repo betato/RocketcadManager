@@ -54,37 +54,25 @@ namespace RocketcadManager
             if (!NameOk())
             {
                 if (MissingComponentError)
-                {
-                    thisNode.ImageKey = "WarningErrorFile";
-                    thisNode.SelectedImageKey = "WarningErrorFile";
-                }
+                    SetImageKey(thisNode, "WarningErrorFile");
                 else if (!HasInfo)
-                {
-                    thisNode.ImageKey = "WarningQuestionFile";
-                    thisNode.SelectedImageKey = "WarningQuestionFile";
-                }
+                    SetImageKey(thisNode, "WarningQuestionFile");
                 else
-                {
-                    thisNode.ImageKey = "WarningFile";
-                    thisNode.SelectedImageKey = "WarningFile";
-                }
+                    SetImageKey(thisNode, "WarningFile");
             }
             else if (MissingComponentError)
-            {
-                thisNode.ImageKey = "ErrorFile";
-                thisNode.SelectedImageKey = "ErrorFile";
-            }
+                SetImageKey(thisNode, "File");
             else if (!HasInfo)
-            {
-                thisNode.ImageKey = "QuestionFile";
-                thisNode.SelectedImageKey = "QuestionFile";
-            }
+                SetImageKey(thisNode, "File");
             else
-            {
-                thisNode.ImageKey = "File";
-                thisNode.SelectedImageKey = "File";
-            }
+                SetImageKey(thisNode, "File");
             return thisNode;
+        }
+
+        private void SetImageKey(TreeNode node, string imageKey)
+        {
+            node.ImageKey = imageKey;
+            node.SelectedImageKey = imageKey;
         }
 
         public virtual bool NameOk()
