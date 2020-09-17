@@ -123,6 +123,26 @@ namespace RocketcadManager {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap QuestionFile {
+            get {
+                object obj = ResourceManager.GetObject("QuestionFile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap QuestionFolder {
+            get {
+                object obj = ResourceManager.GetObject("QuestionFolder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Refresh {
             get {
                 object obj = ResourceManager.GetObject("Refresh", resourceCulture);
@@ -176,6 +196,26 @@ namespace RocketcadManager {
         internal static System.Drawing.Bitmap WarningFolder {
             get {
                 object obj = ResourceManager.GetObject("WarningFolder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningQuestionFile {
+            get {
+                object obj = ResourceManager.GetObject("WarningQuestionFile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WarningQuestionFolder {
+            get {
+                object obj = ResourceManager.GetObject("WarningQuestionFolder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
