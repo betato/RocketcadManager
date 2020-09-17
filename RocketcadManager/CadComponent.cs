@@ -46,36 +46,37 @@ namespace RocketcadManager
             return cadInfo;
         }
 
+        public string GetImageKey()
+        {
+            if (!NameOk() || !LocationOk())
+            {
+                if (MissingComponentError || LoadingError)
+                    return "WarningErrorFile";
+                else if (!HasInfo)
+                    return "WarningQuestionFile";
+                else
+                    return "WarningFile";
+            }
+            else if (MissingComponentError || LoadingError)
+                return "ErrorFile";
+            else if (!HasInfo)
+                return "QuestionFile";
+            else
+                return "File";
+        }
+
         public TreeNode GetNode()
         {
             TreeNode thisNode = new TreeNode();
+            string imageKey = GetImageKey();
+
             thisNode.Tag = this;
             thisNode.Text = ComponentFileInfo.Name;
-            if (!NameOk())
-            {
-                if (MissingComponentError || LoadingError)
-                    SetImageKey(thisNode, "WarningErrorFile");
-                else if (!HasInfo)
-                    SetImageKey(thisNode, "WarningQuestionFile");
-                else
-                    SetImageKey(thisNode, "WarningFile");
-            }
-            else if (MissingComponentError || LoadingError)
-                SetImageKey(thisNode, "ErrorFile");
-            else if (!HasInfo)
-                SetImageKey(thisNode, "QuestionFile");
-            else
-                SetImageKey(thisNode, "File");
+            thisNode.ImageKey = imageKey;
+            thisNode.SelectedImageKey = imageKey;
+
             return thisNode;
         }
-
-        private void SetImageKey(TreeNode node, string imageKey)
-        {
-            node.ImageKey = imageKey;
-            node.SelectedImageKey = imageKey;
-        }
-
-        public abstract bool NameOk();
 
         public int UsageCount()
         {
@@ -101,5 +102,13 @@ namespace RocketcadManager
         }
 
         public abstract void Save();
+
+        public abstract bool NameOk();
+
+        public bool LocationOk()
+        {
+            return Regex.Match(ComponentFileInfo.Name, ConstantPaths.ParentFolderRegex).Value
+                == Regex.Match(ComponentFileInfo.Name, ConstantPaths.ChildFileRegex).Value;
+        }
     }
 }
