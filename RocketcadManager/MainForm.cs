@@ -41,7 +41,7 @@ namespace RocketcadManager
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ConfigLoader.Open(out config);
+            Config.Open(out config);
             
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -85,11 +85,8 @@ namespace RocketcadManager
             {
                 fileView.Nodes.Add(cadFolder.DirectoryTree());
             }
-            // Expand top-level nodes
-            foreach (TreeNode node in fileView.Nodes)
-            {
-                node.Expand();
-            }
+            // Expand nodes
+            config.LoadTreeViewExpansion(fileView.Nodes);
 
             toolStripStatusLabel1.Text = "Ready";
         }
@@ -309,14 +306,6 @@ namespace RocketcadManager
                 SelectComponent((CadComponent)component);
         }
 
-        private void textBoxStock_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
         private void SaveSelected()
         {
             // TODO: Add text checking
@@ -336,6 +325,9 @@ namespace RocketcadManager
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSelected();
+            config.SaveTreeViewExpansion(fileView.Nodes);
+
+            Config.Save(config);
         }
 
         private void toolStripSettings_Click(object sender, EventArgs e)
@@ -343,13 +335,15 @@ namespace RocketcadManager
             SettingsForm settingsWindow = new SettingsForm(config);
             if (settingsWindow.ShowDialog(this) == DialogResult.OK)
             {
-                ConfigLoader.Save(config);
+                config.SaveTreeViewExpansion(fileView.Nodes);
+                Config.Save(config);
                 LoadFiles();
             }
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
         {
+            config.SaveTreeViewExpansion(fileView.Nodes);
             LoadFiles();
         }
 

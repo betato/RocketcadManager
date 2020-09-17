@@ -42,6 +42,7 @@
       <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,7 +54,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CadInfoLoader.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ConfigLoader.cs" />
+    <Compile Include="ConstantPaths.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="PartInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
