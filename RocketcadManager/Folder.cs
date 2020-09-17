@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RocketcadManagerLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -61,7 +62,7 @@ namespace RocketcadManager
 
         public bool NameOk()
         {
-            return Regex.IsMatch(Path.Name, @"^([0-9]{2}-)+[0-9]{2}($|\s)");
+            return Regex.IsMatch(Path.Name, ConstantPaths.ValidFolderRegex);
         }
     }
 }

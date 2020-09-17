@@ -75,10 +75,7 @@ namespace RocketcadManager
             node.SelectedImageKey = imageKey;
         }
 
-        public virtual bool NameOk()
-        {
-            return Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+[0-9]{2}(\s.*)*\.(?i)(SLDASM|SLDPRT)(?-i)$");
-        }
+        public abstract bool NameOk();
 
         public int UsageCount()
         {
