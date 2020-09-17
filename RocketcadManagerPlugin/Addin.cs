@@ -254,9 +254,17 @@ namespace RocketcadManagerPlugin
                 LogErrorWithMessage(LogType.AddinSaveError, e);
             }
 
-            // Create a new PartInfo or AssemblyInfo if one was not loaded, then update the info
+            // Create a new PartInfo or AssemblyInfo if one was not loaded and update the info
             try
             {
+                // TODO: Possibly store "Description" and other property names in a constants file
+                CustomPropertyManager propertyManager = swModel.Extension.CustomPropertyManager[""];
+                propertyManager.Get6("Description", false, out string val, out string resolvedVal, 
+                    out bool wasResolved, out bool linkToProperty);
+
+                if (resolvedVal == null || !wasResolved)
+                    resolvedVal = "";
+
                 if (modelType == 1)
                 {
                     if (partInfo == null)
