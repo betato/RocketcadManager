@@ -14,44 +14,41 @@ namespace RocketcadManager
     {
         private List<CadComponent> cadComponents;
 
-        public WarningsListForm(List<CadComponent> cadComponents)
+        public WarningsListForm(List<CadComponent> cadComponents, ImageList imageList)
         {
             this.cadComponents = cadComponents;
             InitializeComponent();
+            listViewWarnings.SmallImageList = imageList;
         }
 
         private void WarningsListForm_Load(object sender, EventArgs e)
         {
             foreach (CadComponent cadComponent in cadComponents)
             {
-                string name = cadComponent.ComponentFileInfo.Name;
-                string file = cadComponent.ComponentFileInfo.FullName;
-                string[] entry = { name, null, file };
                 if (!cadComponent.HasInfo)
-                {
-                    entry[1] = "Missing info file";
-                    listViewWarnings.Items.Add(new ListViewItem(entry));
-                }
+                    AddWarning(cadComponent, "Missing info file", "QuestionFile");
                 if (cadComponent.LoadingError)
-                {
-                    entry[1] = "Error loading info file";
-                    listViewWarnings.Items.Add(new ListViewItem(entry));
-                }
+                    AddWarning(cadComponent, "Error loading info file", "ErrorFile");
                 if (!cadComponent.NameOk())
-                {
-                    entry[1] = "Naming violation";
-                    listViewWarnings.Items.Add(new ListViewItem(entry));
-                }
+                    AddWarning(cadComponent, "Naming violation", "WarningFile");
                 if (cadComponent.MissingComponentError)
-                {
-                    entry[1] = "Referenced components not found";
-                    listViewWarnings.Items.Add(new ListViewItem(entry));
-                }
+                    AddWarning(cadComponent, "Referenced components not found", "ErrorFile");
             }
             foreach (ColumnHeader column in listViewWarnings.Columns)
             {
                 column.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
+        }
+        
+        private void AddWarning(CadComponent cadComponent, string message, string imageKey)
+        {
+            string name = cadComponent.ComponentFileInfo.Name;
+            string file = cadComponent.ComponentFileInfo.FullName;
+            string[] entry = { name, message, file };
+
+            ListViewItem listItem = new ListViewItem(entry);
+            listItem.ImageKey = imageKey;
+            listViewWarnings.Items.Add(listItem);
         }
     }
 }
