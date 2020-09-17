@@ -25,12 +25,13 @@ namespace RocketcadManager
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            string logFile = LogWriter.Write("crash", new string[] { ex.StackTrace });
+            string logFile = LogWriter.Write(LogType.ManagerCrash, ex.StackTrace);
             MessageBox.Show(ex.Message + (e.IsTerminating ? " The program will now close." : "") +
                 "\n\nStack trace written to: " + logFile, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private Config config;
+        private ImageList iconList = new ImageList();
 
         private Dictionary<string, Part> parts = new Dictionary<string, Part>();
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
@@ -41,19 +42,22 @@ namespace RocketcadManager
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ConfigLoader.Open(out config);
+            Config.Open(out config);
             
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add("File", Icons.File);
-            imageList.Images.Add("Folder", Icons.Folder);
-            imageList.Images.Add("WarningFile", Icons.WarningFile);
-            imageList.Images.Add("WarningFolder", Icons.WarningFolder);
-            imageList.Images.Add("ErrorFile", Icons.ErrorFile);
-            imageList.Images.Add("ErrorFolder", Icons.ErrorFolder);
-            imageList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
-            imageList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
-            fileView.ImageList = imageList;
+            iconList.ColorDepth = ColorDepth.Depth32Bit;
+            iconList.Images.Add("File", Icons.File);
+            iconList.Images.Add("Folder", Icons.Folder);
+            iconList.Images.Add("WarningFile", Icons.WarningFile);
+            iconList.Images.Add("WarningFolder", Icons.WarningFolder);
+            iconList.Images.Add("ErrorFile", Icons.ErrorFile);
+            iconList.Images.Add("ErrorFolder", Icons.ErrorFolder);
+            iconList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
+            iconList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
+            iconList.Images.Add("QuestionFile", Icons.QuestionFile);
+            iconList.Images.Add("QuestionFolder", Icons.QuestionFolder);
+            iconList.Images.Add("WarningQuestionFile", Icons.WarningQuestionFile);
+            iconList.Images.Add("WarningQuestionFolder", Icons.WarningQuestionFolder);
+            fileView.ImageList = iconList;
 
             LoadFiles();
         }
@@ -85,11 +89,8 @@ namespace RocketcadManager
             {
                 fileView.Nodes.Add(cadFolder.DirectoryTree());
             }
-            // Expand top-level nodes
-            foreach (TreeNode node in fileView.Nodes)
-            {
-                node.Expand();
-            }
+            // Expand nodes
+            config.LoadTreeViewExpansion(fileView.Nodes);
 
             toolStripStatusLabel1.Text = "Ready";
         }
@@ -309,14 +310,6 @@ namespace RocketcadManager
                 SelectComponent((CadComponent)component);
         }
 
-        private void textBoxStock_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
         private void SaveSelected()
         {
             // TODO: Add text checking
@@ -336,6 +329,9 @@ namespace RocketcadManager
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSelected();
+            config.SaveTreeViewExpansion(fileView.Nodes);
+
+            Config.Save(config);
         }
 
         private void toolStripSettings_Click(object sender, EventArgs e)
@@ -343,13 +339,15 @@ namespace RocketcadManager
             SettingsForm settingsWindow = new SettingsForm(config);
             if (settingsWindow.ShowDialog(this) == DialogResult.OK)
             {
-                ConfigLoader.Save(config);
+                config.SaveTreeViewExpansion(fileView.Nodes);
+                Config.Save(config);
                 LoadFiles();
             }
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
         {
+            config.SaveTreeViewExpansion(fileView.Nodes);
             LoadFiles();
         }
 
@@ -440,7 +438,7 @@ namespace RocketcadManager
             List<CadComponent> cadComponents = new List<CadComponent>();
             cadComponents.AddRange(parts.Values.ToList());
             cadComponents.AddRange(assemblies.Values.ToList());
-            WarningsListForm warningsList = new WarningsListForm(cadComponents);
+            WarningsListForm warningsList = new WarningsListForm(cadComponents, iconList);
             warningsList.ShowDialog(this);
         }
     }
