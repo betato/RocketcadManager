@@ -46,38 +46,36 @@ namespace RocketcadManager
             return cadInfo;
         }
 
+        public string GetImageKey()
+        {
+            if (!NameOk() || !LocationOk())
+            {
+                if (MissingComponentError || LoadingError)
+                    return "WarningErrorFile";
+                else if (!HasInfo)
+                    return "WarningQuestionFile";
+                else
+                    return "WarningFile";
+            }
+            else if (MissingComponentError || LoadingError)
+                return "ErrorFile";
+            else if (!HasInfo)
+                return "QuestionFile";
+            else
+                return "File";
+        }
+
         public TreeNode GetNode()
         {
             TreeNode thisNode = new TreeNode();
+            string imageKey = GetImageKey();
+
             thisNode.Tag = this;
             thisNode.Text = ComponentFileInfo.Name;
-            if (!NameOk())
-            {
-                if (MissingComponentError || LoadingError)
-                    SetImageKey(thisNode, "WarningErrorFile");
-                else if (!HasInfo)
-                    SetImageKey(thisNode, "WarningQuestionFile");
-                else
-                    SetImageKey(thisNode, "WarningFile");
-            }
-            else if (MissingComponentError || LoadingError)
-                SetImageKey(thisNode, "ErrorFile");
-            else if (!HasInfo)
-                SetImageKey(thisNode, "QuestionFile");
-            else
-                SetImageKey(thisNode, "File");
+            thisNode.ImageKey = imageKey;
+            thisNode.SelectedImageKey = imageKey;
+
             return thisNode;
-        }
-
-        private void SetImageKey(TreeNode node, string imageKey)
-        {
-            node.ImageKey = imageKey;
-            node.SelectedImageKey = imageKey;
-        }
-
-        public virtual bool NameOk()
-        {
-            return Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+[0-9]{2}(\s.*)*\.(?i)(SLDASM|SLDPRT)(?-i)$");
         }
 
         public int UsageCount()
@@ -104,5 +102,17 @@ namespace RocketcadManager
         }
 
         public abstract void Save();
+
+        public abstract bool NameOk();
+
+        public bool LocationOk()
+        {
+            if (ParentFolder == null)
+                return true;
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder.ParentFolder == null)
+                return true;
+            return Regex.Match(ParentFolder.Path.Name, ConstantPaths.ParentFolderRegex).Groups[1].Value
+                == Regex.Match(ComponentFileInfo.Name, ConstantPaths.ChildFileRegex).Groups[1].Value;
+        }
     }
 }

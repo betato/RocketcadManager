@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RocketcadManagerLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -30,7 +31,7 @@ namespace RocketcadManager
             thisNode.Tag = this;
             thisNode.Text = Path.Name;
 
-            if (NameOk())
+            if (NameOk() && LocationOk())
                 SetImageKey(thisNode, "Folder");
             else
                 SetImageKey(thisNode, "WarningFolder");
@@ -61,7 +62,21 @@ namespace RocketcadManager
 
         public bool NameOk()
         {
-            return Regex.IsMatch(Path.Name, @"^([0-9]{2}-)+[0-9]{2}($|\s)");
+            // Ignore top level folders
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder == null)
+                return true;
+            return Regex.IsMatch(Path.Name, ConstantPaths.ValidFolderRegex);
+        }
+
+        public bool LocationOk()
+        {
+            if (ParentFolder == null)
+                return true;
+            // Ignore top level folders
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder.ParentFolder == null)
+                return true;
+            return Regex.Match(ParentFolder.Path.Name, ConstantPaths.ParentFolderRegex).Groups[1].Value
+                == Regex.Match(Path.Name, ConstantPaths.ChildFolderRegex).Groups[1].Value;
         }
     }
 }
