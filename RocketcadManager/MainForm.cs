@@ -15,10 +15,11 @@ namespace RocketcadManager
 {
     public partial class MainForm : Form
     {
-        public MainForm()
+        private int showWindowMsg;
+        public MainForm(int showWindowMsg)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+            this.showWindowMsg = showWindowMsg;
             InitializeComponent();
         }
 
@@ -60,6 +61,18 @@ namespace RocketcadManager
             fileView.ImageList = iconList;
 
             LoadFiles();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if(m.Msg == showWindowMsg)
+            {
+                if (WindowState == FormWindowState.Minimized)
+                    WindowState = FormWindowState.Normal;
+                TopMost = true;
+                TopMost = false;
+            }
+            base.WndProc(ref m);
         }
 
         private void LoadFiles()
