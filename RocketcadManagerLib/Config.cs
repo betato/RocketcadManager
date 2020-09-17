@@ -30,7 +30,7 @@ namespace RocketcadManagerLib
         public static void Save(Config config)
         {
             ConstantPaths.ConfigFile.Directory.Create();
-            File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config, Formatting.Indented));
+            File.WriteAllText(ConstantPaths.ConfigFile.FullName, JsonConvert.SerializeObject(config));
         }
 
         private class FolderNode
