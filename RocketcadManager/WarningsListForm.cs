@@ -29,6 +29,8 @@ namespace RocketcadManager
                 StringBuilder errorStrBuilder = new StringBuilder();
                 if (!cadComponent.NameOk())
                     errorStrBuilder.Append("Naming violation, ");
+                if (!cadComponent.LocationOk())
+                    errorStrBuilder.Append("Name does not match parent folder, ");
                 if (!cadComponent.HasInfo)
                     errorStrBuilder.Append("Missing info file, ");
                 if (cadComponent.MissingComponentError)
@@ -41,20 +43,7 @@ namespace RocketcadManager
                 string errorStr = errorStrBuilder.ToString();
 
                 // Set error icons
-                // TODO: Combine this with the similar CadComponent method
-                if (!cadComponent.NameOk())
-                {
-                    if (cadComponent.MissingComponentError || cadComponent.LoadingError)
-                        AddWarning(cadComponent, errorStr, "WarningErrorFile");
-                    else if (!cadComponent.HasInfo)
-                        AddWarning(cadComponent, errorStr, "WarningQuestionFile");
-                    else
-                        AddWarning(cadComponent, errorStr, "WarningFile");
-                }
-                else if (cadComponent.MissingComponentError || cadComponent.LoadingError)
-                    AddWarning(cadComponent, errorStr, "ErrorFile");
-                else if (!cadComponent.HasInfo)
-                    AddWarning(cadComponent, errorStr, "QuestionFile");
+                AddWarning(cadComponent, errorStr, cadComponent.GetImageKey());
             }
             foreach (ColumnHeader column in listViewWarnings.Columns)
             {

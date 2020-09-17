@@ -27,8 +27,7 @@ namespace RocketcadManager
 
         public override bool NameOk()
         {
-            // Part names cannot end with 00
-            return base.NameOk() && !Regex.IsMatch(ComponentFileInfo.Name, @"^([0-9]{2}-)+00(\s.*)*\.(?i)SLDASM(?-i)$");
+            return Regex.IsMatch(ComponentFileInfo.Name, ConstantPaths.ValidPartRegex);
         }
     }
 }
