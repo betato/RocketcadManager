@@ -107,8 +107,12 @@ namespace RocketcadManager
 
         public bool LocationOk()
         {
-            return Regex.Match(ComponentFileInfo.Name, ConstantPaths.ParentFolderRegex).Value
-                == Regex.Match(ComponentFileInfo.Name, ConstantPaths.ChildFileRegex).Value;
+            if (ParentFolder == null)
+                return true;
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder.ParentFolder == null)
+                return true;
+            return Regex.Match(ParentFolder.Path.Name, ConstantPaths.ParentFolderRegex).Groups[1].Value
+                == Regex.Match(ComponentFileInfo.Name, ConstantPaths.ChildFileRegex).Groups[1].Value;
         }
     }
 }

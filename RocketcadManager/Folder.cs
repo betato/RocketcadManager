@@ -62,13 +62,21 @@ namespace RocketcadManager
 
         public bool NameOk()
         {
+            // Ignore top level folders
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder == null)
+                return true;
             return Regex.IsMatch(Path.Name, ConstantPaths.ValidFolderRegex);
         }
 
         public bool LocationOk()
         {
-            return Regex.Match(Path.Name, ConstantPaths.ParentFolderRegex).Value
-                == Regex.Match(Path.Name, ConstantPaths.ChildFolderRegex).Value;
+            if (ParentFolder == null)
+                return true;
+            // Ignore top level folders
+            if (ConstantPaths.IgnoreTopLevelFolders && ParentFolder.ParentFolder == null)
+                return true;
+            return Regex.Match(ParentFolder.Path.Name, ConstantPaths.ParentFolderRegex).Groups[1].Value
+                == Regex.Match(Path.Name, ConstantPaths.ChildFolderRegex).Groups[1].Value;
         }
     }
 }

@@ -19,8 +19,9 @@ namespace RocketcadManagerLib
         public static readonly string ValidAssemblyRegex = @"^([0-9]{2}-)+00(\s.*)?\.(?i)SLDASM(?-i)$";
         public static readonly string ValidFolderRegex = @"^([0-9]{2}-)+[0-9]{2}($|\s)";
 
-        public static readonly string ParentFolderRegex = @"^([0-9]{2}-)+[0-9]{2}($|\s)";
-        public static readonly string ChildFolderRegex = @"";
-        public static readonly string ChildFileRegex = @"";
+        public static readonly string ParentFolderRegex = @"^(([0-9]{2}-)+[0-9]{2})";
+        public static readonly string ChildFolderRegex = @"^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}($|\s)";
+        public static readonly string ChildFileRegex = @"^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}(\s.*)?\.(?i)(SLDASM|SLDPRT)(?-i)$";
+        public static readonly bool IgnoreTopLevelFolders = true;
     }
 }

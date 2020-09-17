@@ -29,6 +29,8 @@ namespace RocketcadManager
                 StringBuilder errorStrBuilder = new StringBuilder();
                 if (!cadComponent.NameOk())
                     errorStrBuilder.Append("Naming violation, ");
+                if (!cadComponent.LocationOk())
+                    errorStrBuilder.Append("Name does not match parent folder, ");
                 if (!cadComponent.HasInfo)
                     errorStrBuilder.Append("Missing info file, ");
                 if (cadComponent.MissingComponentError)
