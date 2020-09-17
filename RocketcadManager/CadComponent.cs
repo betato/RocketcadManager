@@ -53,10 +53,15 @@ namespace RocketcadManager
             thisNode.Text = ComponentFileInfo.Name;
             if (!NameOk())
             {
-                if (!HasInfo || MissingComponentError)
+                if (MissingComponentError)
                 {
                     thisNode.ImageKey = "WarningErrorFile";
                     thisNode.SelectedImageKey = "WarningErrorFile";
+                }
+                else if (!HasInfo)
+                {
+                    thisNode.ImageKey = "WarningQuestionFile";
+                    thisNode.SelectedImageKey = "WarningQuestionFile";
                 }
                 else
                 {
@@ -64,10 +69,15 @@ namespace RocketcadManager
                     thisNode.SelectedImageKey = "WarningFile";
                 }
             }
-            else if (!HasInfo || MissingComponentError)
+            else if (MissingComponentError)
             {
                 thisNode.ImageKey = "ErrorFile";
                 thisNode.SelectedImageKey = "ErrorFile";
+            }
+            else if (!HasInfo)
+            {
+                thisNode.ImageKey = "QuestionFile";
+                thisNode.SelectedImageKey = "QuestionFile";
             }
             else
             {

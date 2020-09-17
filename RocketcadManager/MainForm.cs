@@ -53,6 +53,10 @@ namespace RocketcadManager
             imageList.Images.Add("ErrorFolder", Icons.ErrorFolder);
             imageList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
             imageList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
+            imageList.Images.Add("QuestionFile", Icons.QuestionFile);
+            imageList.Images.Add("QuestionFolder", Icons.QuestionFolder);
+            imageList.Images.Add("WarningQuestionFile", Icons.WarningQuestionFile);
+            imageList.Images.Add("WarningQuestionFolder", Icons.WarningQuestionFolder);
             fileView.ImageList = imageList;
 
             LoadFiles();
