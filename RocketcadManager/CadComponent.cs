@@ -61,9 +61,9 @@ namespace RocketcadManager
                     SetImageKey(thisNode, "WarningFile");
             }
             else if (MissingComponentError)
-                SetImageKey(thisNode, "File");
+                SetImageKey(thisNode, "ErrorFile");
             else if (!HasInfo)
-                SetImageKey(thisNode, "File");
+                SetImageKey(thisNode, "QuestionFile");
             else
                 SetImageKey(thisNode, "File");
             return thisNode;
