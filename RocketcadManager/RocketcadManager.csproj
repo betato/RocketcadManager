@@ -161,6 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="largeicon.ico" />
+    <None Include="Resources\WarningQuestionFolder16.png" />
+    <None Include="Resources\WarningQuestionFile16.png" />
+    <None Include="Resources\WarningErrorFolder16.png" />
+    <None Include="Resources\WarningErrorFile16.png" />
+    <None Include="Resources\QuestionFolder16.png" />
+    <None Include="Resources\QuestionFile16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

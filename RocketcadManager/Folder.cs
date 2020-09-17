@@ -31,29 +31,26 @@ namespace RocketcadManager
             thisNode.Text = Path.Name;
 
             if (NameOk())
-            {
-                thisNode.ImageKey = "Folder";
-                thisNode.SelectedImageKey = "Folder";
-            }
+                SetImageKey(thisNode, "Folder");
             else
-            {
-                thisNode.ImageKey = "WarningFolder";
-                thisNode.SelectedImageKey = "WarningFolder";
-            }
+                SetImageKey(thisNode, "WarningFolder");
 
             foreach (Folder folder in subFolders)
-            {
                 thisNode.Nodes.Add(folder.DirectoryTree());
-            }
+
             foreach (Assembly assembly in assemblies)
-            {
                 thisNode.Nodes.Add(assembly.GetNode());
-            }
+
             foreach (Part part in parts)
-            {
                 thisNode.Nodes.Add(part.GetNode());
-            }
+
             return thisNode;
+        }
+
+        private void SetImageKey(TreeNode node, string imageKey)
+        {
+            node.ImageKey = imageKey;
+            node.SelectedImageKey = imageKey;
         }
 
         public bool IsEmpty()

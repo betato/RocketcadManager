@@ -31,6 +31,7 @@ namespace RocketcadManager
         }
 
         private Config config;
+        private ImageList iconList = new ImageList();
 
         private Dictionary<string, Part> parts = new Dictionary<string, Part>();
         private Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
@@ -43,17 +44,20 @@ namespace RocketcadManager
         {
             Config.Open(out config);
             
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add("File", Icons.File);
-            imageList.Images.Add("Folder", Icons.Folder);
-            imageList.Images.Add("WarningFile", Icons.WarningFile);
-            imageList.Images.Add("WarningFolder", Icons.WarningFolder);
-            imageList.Images.Add("ErrorFile", Icons.ErrorFile);
-            imageList.Images.Add("ErrorFolder", Icons.ErrorFolder);
-            imageList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
-            imageList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
-            fileView.ImageList = imageList;
+            iconList.ColorDepth = ColorDepth.Depth32Bit;
+            iconList.Images.Add("File", Icons.File);
+            iconList.Images.Add("Folder", Icons.Folder);
+            iconList.Images.Add("WarningFile", Icons.WarningFile);
+            iconList.Images.Add("WarningFolder", Icons.WarningFolder);
+            iconList.Images.Add("ErrorFile", Icons.ErrorFile);
+            iconList.Images.Add("ErrorFolder", Icons.ErrorFolder);
+            iconList.Images.Add("WarningErrorFile", Icons.WarningErrorFile);
+            iconList.Images.Add("WarningErrorFolder", Icons.WarningErrorFolder);
+            iconList.Images.Add("QuestionFile", Icons.QuestionFile);
+            iconList.Images.Add("QuestionFolder", Icons.QuestionFolder);
+            iconList.Images.Add("WarningQuestionFile", Icons.WarningQuestionFile);
+            iconList.Images.Add("WarningQuestionFolder", Icons.WarningQuestionFolder);
+            fileView.ImageList = iconList;
 
             LoadFiles();
         }
@@ -434,7 +438,7 @@ namespace RocketcadManager
             List<CadComponent> cadComponents = new List<CadComponent>();
             cadComponents.AddRange(parts.Values.ToList());
             cadComponents.AddRange(assemblies.Values.ToList());
-            WarningsListForm warningsList = new WarningsListForm(cadComponents);
+            WarningsListForm warningsList = new WarningsListForm(cadComponents, iconList);
             warningsList.ShowDialog(this);
         }
     }

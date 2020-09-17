@@ -56,7 +56,7 @@
             // 
             // columnHeaderError
             // 
-            this.columnHeaderError.Text = "Error";
+            this.columnHeaderError.Text = "Errors";
             this.columnHeaderError.Width = 40;
             // 
             // columnHeaderFile
