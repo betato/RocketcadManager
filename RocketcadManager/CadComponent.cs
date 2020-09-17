@@ -53,14 +53,14 @@ namespace RocketcadManager
             thisNode.Text = ComponentFileInfo.Name;
             if (!NameOk())
             {
-                if (MissingComponentError)
+                if (MissingComponentError || LoadingError)
                     SetImageKey(thisNode, "WarningErrorFile");
                 else if (!HasInfo)
                     SetImageKey(thisNode, "WarningQuestionFile");
                 else
                     SetImageKey(thisNode, "WarningFile");
             }
-            else if (MissingComponentError)
+            else if (MissingComponentError || LoadingError)
                 SetImageKey(thisNode, "ErrorFile");
             else if (!HasInfo)
                 SetImageKey(thisNode, "QuestionFile");

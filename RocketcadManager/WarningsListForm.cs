@@ -25,14 +25,36 @@ namespace RocketcadManager
         {
             foreach (CadComponent cadComponent in cadComponents)
             {
-                if (!cadComponent.HasInfo)
-                    AddWarning(cadComponent, "Missing info file", "QuestionFile");
-                if (cadComponent.LoadingError)
-                    AddWarning(cadComponent, "Error loading info file", "ErrorFile");
+                // Create error string
+                StringBuilder errorStrBuilder = new StringBuilder();
                 if (!cadComponent.NameOk())
-                    AddWarning(cadComponent, "Naming violation", "WarningFile");
+                    errorStrBuilder.Append("Naming violation, ");
+                if (!cadComponent.HasInfo)
+                    errorStrBuilder.Append("Missing info file, ");
                 if (cadComponent.MissingComponentError)
-                    AddWarning(cadComponent, "Referenced components not found", "ErrorFile");
+                    errorStrBuilder.Append("Referenced components not found, ");
+                if (cadComponent.LoadingError)
+                    errorStrBuilder.Append("Error loading info file, ");
+                if (errorStrBuilder.Length <= 0)
+                    continue; // No errors
+                errorStrBuilder.Length -= 2; // Trim trailing comma and space
+                string errorStr = errorStrBuilder.ToString();
+
+                // Set error icons
+                // TODO: Combine this with the similar CadComponent method
+                if (!cadComponent.NameOk())
+                {
+                    if (cadComponent.MissingComponentError || cadComponent.LoadingError)
+                        AddWarning(cadComponent, errorStr, "WarningErrorFile");
+                    else if (!cadComponent.HasInfo)
+                        AddWarning(cadComponent, errorStr, "WarningQuestionFile");
+                    else
+                        AddWarning(cadComponent, errorStr, "WarningFile");
+                }
+                else if (cadComponent.MissingComponentError || cadComponent.LoadingError)
+                    AddWarning(cadComponent, errorStr, "ErrorFile");
+                else if (!cadComponent.HasInfo)
+                    AddWarning(cadComponent, errorStr, "QuestionFile");
             }
             foreach (ColumnHeader column in listViewWarnings.Columns)
             {
