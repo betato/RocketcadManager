@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractPipe.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CadInfoLoader.cs" />
     <Compile Include="Config.cs" />
