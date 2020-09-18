@@ -15,7 +15,7 @@ namespace RocketcadManager
 
         private NamedPipeServerStream serverPipe;
 
-        public override void Start()
+        protected override void RunAsync()
         {
             serverPipe = new NamedPipeServerStream(Name, PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.Asynchronous);

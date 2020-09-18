@@ -15,7 +15,7 @@ namespace RocketcadManagerPlugin
 
         public ClientPipe(string name) : base(name) { }
 
-        public override void Start()
+        protected override void RunAsync()
         {
             clientPipe = new NamedPipeClientStream(".", Name,
                 PipeDirection.InOut, PipeOptions.Asynchronous);

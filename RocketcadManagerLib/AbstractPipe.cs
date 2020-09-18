@@ -22,7 +22,15 @@ namespace RocketcadManagerLib
             Name = name;
         }
 
-        public abstract void Start();
+        public void Run()
+        {
+            if (pipe == null)
+                RunAsync();
+            else
+                throw new InvalidOperationException("Pipe already started.");
+        }
+
+        protected abstract void RunAsync();
 
         public void Stop()
         {
@@ -86,7 +94,7 @@ namespace RocketcadManagerLib
             }
 
             Disconnected?.Invoke();
-            Start();
+            RunAsync();
         }
     }
 }
