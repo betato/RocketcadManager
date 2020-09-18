@@ -11,6 +11,7 @@ namespace RocketcadManagerLib
     {
         public string Name { get; private set; }
         protected PipeStream pipe;
+        private const int EndOfStream = -1;
 
         public event Action Connected;
         public event Action Disconnected;
@@ -28,7 +29,10 @@ namespace RocketcadManagerLib
             if (pipe == null)
                 return;
             if (pipe.IsConnected)
-                pipe.Write(new byte[0], 0, 0);
+            {
+                byte[] eos = BitConverter.GetBytes(EndOfStream);
+                pipe.Write(eos, 0, eos.Length);
+            }
             pipe.WaitForPipeDrain();
             pipe.Close();
             pipe.Dispose();
@@ -48,8 +52,11 @@ namespace RocketcadManagerLib
 
         public void Write(string message)
         {
-            byte[] response = BitConverter.GetBytes(0);
-            pipe.Write(response, 0, response.Length);
+            byte[] messageData = Encoding.UTF8.GetBytes(message);
+            byte[] lengthHeader = BitConverter.GetBytes(messageData.Length);
+
+            pipe.Write(lengthHeader, 0, lengthHeader.Length);
+            pipe.Write(messageData, 0, messageData.Length);
         }
 
         private void ReadAsync()
@@ -58,14 +65,19 @@ namespace RocketcadManagerLib
             {
                 while (true)
                 {
-                    byte[] buffer = new byte[sizeof(int)];
-                    if (pipe.Read(buffer, 0, buffer.Length) <= 0)
-                    {
-                        // Connection closed, wait for new connection
-                        break;
-                    }
+                    // Get message length
+                    byte[] lengthHeader = new byte[sizeof(int)];
+                    if (pipe.Read(lengthHeader, 0, lengthHeader.Length) <= 0)
+                        break; // Connection closed, wait for new connection
+                    int messageLength = BitConverter.ToInt32(lengthHeader, 0);
+                    if (messageLength == EndOfStream)
+                        break; // Connection closed
 
-                    MessageRecieved?.Invoke("recieved");
+                    // Get message
+                    byte[] messageData = new byte[messageLength];
+                    if (pipe.Read(messageData, 0, messageLength) != messageLength)
+                        break; // This is an error
+                    MessageRecieved?.Invoke(Encoding.UTF8.GetString(messageData));
                 }
             }
             catch (Exception)
