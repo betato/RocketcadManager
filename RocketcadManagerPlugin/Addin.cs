@@ -212,11 +212,7 @@ namespace RocketcadManagerPlugin
                 (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
 #endif
             if (!FilePathGood(filename))
-            {
-                swApp.SendMsgToUser2(string.Format("Error! Invalid file path. {0}", filename),
-                (int)swMessageBoxIcon_e.swMbStop, (int)swMessageBoxBtn_e.swMbOk);
-                return;
-            }
+                return; // File is not in a cad directory
             ModelDoc2 swModel = swApp.ActiveDoc;
             if (swModel == null)
             {
