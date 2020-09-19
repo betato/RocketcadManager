@@ -20,6 +20,7 @@ namespace RocketcadManagerPlugin
         private SldWorks swApp;
         private int sessionCookie;
         private Config config;
+        private ClientPipe addinLinkClient = new ClientPipe(ConstantPaths.DefaultPipeName);
 
         public bool ConnectToSW(object ThisSW, int Cookie)
         {
@@ -50,7 +51,34 @@ namespace RocketcadManagerPlugin
             {
                 LogErrorWithMessage(LogType.AddinError, e);
             }
+
+            addinLinkClient.Connected += AddinLinkClient_Connected;
+            addinLinkClient.Disconnected += AddinLinkClient_Disconnected;
+            addinLinkClient.MessageRecieved += AddinLinkClient_MessageRecieved;
+
+            swApp.SendMsgToUser2("starting",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
+            addinLinkClient.Start();
+
             return true;
+        }
+
+        private void AddinLinkClient_MessageRecieved(string message)
+        {
+            swApp.SendMsgToUser2(message,
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
+        }
+
+        private void AddinLinkClient_Disconnected()
+        {
+            swApp.SendMsgToUser2("AddinLinkClient_Disconnected",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
+        }
+
+        private void AddinLinkClient_Connected()
+        {
+            swApp.SendMsgToUser2("AddinLinkClient_Connected",
+                (int)swMessageBoxIcon_e.swMbInformation, (int)swMessageBoxBtn_e.swMbOk);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

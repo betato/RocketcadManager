@@ -21,6 +21,7 @@ namespace RocketcadManagerLib
         public static LogType AddinError { get { return new LogType("addin-error"); } }
         public static LogType AddinSaveError { get { return new LogType("addin-save-error"); } }
         public static LogType ConfigLoaderError { get { return new LogType("config-loader-error"); } }
+        public static LogType AddinLinkError { get { return new LogType("addin-link-error"); } }
     }
 
     public static class LogWriter

@@ -20,6 +20,11 @@ namespace RocketcadManager
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             this.showWindowMsg = showWindowMsg;
+
+            addinLinkServer.Connected += AddinLinkServer_Connected;
+            addinLinkServer.Disconnected += AddinLinkServer_Disconnected;
+            addinLinkServer.MessageRecieved += AddinLinkServer_MessageRecieved;
+
             InitializeComponent();
         }
 
@@ -31,6 +36,7 @@ namespace RocketcadManager
                 "\n\nStack trace written to: " + logFile, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        private ServerPipe addinLinkServer = new ServerPipe(ConstantPaths.DefaultPipeName);
         private Config config;
         private ImageList iconList = new ImageList();
 
@@ -60,7 +66,25 @@ namespace RocketcadManager
             iconList.Images.Add("WarningQuestionFolder", Icons.WarningQuestionFolder);
             fileView.ImageList = iconList;
 
+            addinLinkServer.Start();
             LoadFiles();
+        }
+
+        private void AddinLinkServer_MessageRecieved(string message)
+        {
+            MessageBox.Show(message);
+        }
+
+        private void AddinLinkServer_Disconnected()
+        {
+            MessageBox.Show("AddinLinkServer_Disconnected");
+            statusLabel2.Text = "Waiting for addin connection...";
+        }
+
+        private void AddinLinkServer_Connected()
+        {
+            MessageBox.Show("AddinLinkServer_Connected");
+            statusLabel2.Text = "Addin connected";
         }
 
         protected override void WndProc(ref Message m)
@@ -77,7 +101,7 @@ namespace RocketcadManager
 
         private void LoadFiles()
         {
-            toolStripStatusLabel1.Text = "Loading Files";
+            statusLabel1.Text = "Loading Files";
             EnableBoxes(false);
 
             parts.Clear();
@@ -105,7 +129,7 @@ namespace RocketcadManager
             // Expand nodes
             config.LoadTreeViewExpansion(fileView.Nodes);
 
-            toolStripStatusLabel1.Text = "Ready";
+            statusLabel1.Text = "Ready";
         }
 
         private void WalkDirectoryTree(Folder rootFolder)
@@ -328,13 +352,13 @@ namespace RocketcadManager
             // TODO: Add text checking
             if (selectedComponent != null && selectedComponent.HasInfo)
             {
-                toolStripStatusLabel1.Text = "Saving";
+                statusLabel1.Text = "Saving";
                 selectedComponent.CadInfo.Notes = textBoxNotes.Text;
                 selectedComponent.CadInfo.Stock = Convert.ToInt32(numericStock.Value);
                 selectedComponent.CadInfo.AdditionalRequired = Convert.ToInt32(numericRequiredAdditional.Value);
                 selectedComponent.Save();
                 Console.WriteLine("Saved");
-                toolStripStatusLabel1.Text = "Ready";
+                statusLabel1.Text = "Ready";
             }
         }
 

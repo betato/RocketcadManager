@@ -23,5 +23,7 @@ namespace RocketcadManagerLib
         public static readonly string ChildFolderRegex = @"^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}($|\s)";
         public static readonly string ChildFileRegex = @"^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}(\s.*)?\.(?i)(SLDASM|SLDPRT)(?-i)$";
         public static readonly bool IgnoreTopLevelFolders = true;
+
+        public static readonly string DefaultPipeName = "Q26J5ZO2Y5OQUWXMFK9P938JKXU8S6LO";
     }
 }

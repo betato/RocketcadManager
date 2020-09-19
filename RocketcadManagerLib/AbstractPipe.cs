@@ -11,7 +11,6 @@ namespace RocketcadManagerLib
     {
         public string Name { get; private set; }
         protected PipeStream pipe;
-        private const int EndOfStream = -1;
 
         public event Action Connected;
         public event Action Disconnected;
@@ -22,7 +21,7 @@ namespace RocketcadManagerLib
             Name = name;
         }
 
-        public void Run()
+        public void Start()
         {
             if (pipe == null)
                 RunAsync();
@@ -32,21 +31,6 @@ namespace RocketcadManagerLib
 
         protected abstract void RunAsync();
 
-        public void Stop()
-        {
-            if (pipe == null)
-                return;
-            if (pipe.IsConnected)
-            {
-                byte[] eos = BitConverter.GetBytes(EndOfStream);
-                pipe.Write(eos, 0, eos.Length);
-            }
-            pipe.WaitForPipeDrain();
-            pipe.Close();
-            pipe.Dispose();
-            pipe = null;
-        }
-
         public bool IsConnected()
         {
             return pipe != null && pipe.IsConnected;
@@ -55,19 +39,20 @@ namespace RocketcadManagerLib
         protected void BeginRead()
         {
             Connected?.Invoke();
-            Task.Run(() => ReadAsync());
+            Read();
         }
 
         public void Write(string message)
         {
             byte[] messageData = Encoding.UTF8.GetBytes(message);
             byte[] lengthHeader = BitConverter.GetBytes(messageData.Length);
-
-            pipe.Write(lengthHeader, 0, lengthHeader.Length);
-            pipe.Write(messageData, 0, messageData.Length);
+            byte[] fullMessage = new byte[lengthHeader.Length + messageData.Length];
+            Buffer.BlockCopy(lengthHeader, 0, fullMessage, 0, lengthHeader.Length);
+            Buffer.BlockCopy(messageData, 0, fullMessage, lengthHeader.Length, messageData.Length);
+            pipe.WriteAsync(fullMessage, 0, fullMessage.Length);
         }
 
-        private void ReadAsync()
+        private void Read()
         {
             try
             {
@@ -78,23 +63,25 @@ namespace RocketcadManagerLib
                     if (pipe.Read(lengthHeader, 0, lengthHeader.Length) <= 0)
                         break; // Connection closed, wait for new connection
                     int messageLength = BitConverter.ToInt32(lengthHeader, 0);
-                    if (messageLength == EndOfStream)
+                    if (messageLength <= 0)
                         break; // Connection closed
 
                     // Get message
                     byte[] messageData = new byte[messageLength];
                     if (pipe.Read(messageData, 0, messageLength) != messageLength)
-                        break; // This is an error
+                        throw new ArgumentOutOfRangeException("Message length does not match buffer size");
                     MessageRecieved?.Invoke(Encoding.UTF8.GetString(messageData));
                 }
+                // Send disconnect event and begin looking for a new connection
+                Disconnected?.Invoke();
+                RunAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // Pipe broken, wait for new connection
+                MessageRecieved?.Invoke(e.Message);
+                MessageRecieved?.Invoke(e.StackTrace);
+                LogWriter.Write(LogType.AddinLinkError, e.StackTrace);
             }
-
-            Disconnected?.Invoke();
-            RunAsync();
         }
     }
 }
