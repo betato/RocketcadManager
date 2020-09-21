@@ -41,7 +41,7 @@ SOLIDWORKS will now create additional `.status` files when parts and assemblies 
 
 ## Warnings
 
-Warnings are shown to indicate incorrectly named files and folders or file errors. Warning and error icons are shown in the [file view](#file-view) and details can be read in the warnings and errors window.
+Warnings are shown to indicate incorrectly named files and folders or file errors. Warning and error icons are shown in the [file view](#2---file-view) and details can be read in the warnings and errors window.
 
 |Icon                                                                                                           | Warning                           |
 |---------------------------------------------------------------------------------------------------------------|-----------------------------------|
@@ -87,19 +87,19 @@ The following are **incorrectly** named:
 
 To check if a part, assembly, or folder has a valid name, the following regexes are applied. A match must be found for the name to be valid.
 
-|Applied to     |Regex                                                  |
-|---------------|-------------------------------------------------------|
-|Part           |`^([0-9]{2}-)+(0[1-9]|[1-9][0-9])(\s.*)?\.(?i)SLDPRT$` |
-|Assembly       |`^([0-9]{2}-)+00(\s.*)?\.(?i)SLDASM$`                  |
-|Folder         |`^([0-9]{2}-)+[0-9]{2}($|\s)`                          |
+| Applied to    | Regex                                                       |
+|---------------|-------------------------------------------------------------|
+| Part          | `^([0-9]{2}-)+(0[1-9]&#124;[1-9][0-9])(\s.*)?\.(?i)SLDPRT$` |
+| Assembly      | `^([0-9]{2}-)+00(\s.*)?\.(?i)SLDASM$`                       |
+| Folder        | `^([0-9]{2}-)+[0-9]{2}($&#124;\s)`                          |
 
 To check if a part, assembly, or child folder in a correctly named parent folder, the following regexes are applied. The first capturing group result of the parent folder and the Child Folder/Assembly/Part regex must be equal.
 
-|Applied to     |Regex                                                               |
-|---------------|--------------------------------------------------------------------|
-|Parent Folder  |`^(([0-9]{2}-)+[0-9]{2}`                                            |
-|Child Folder   |`^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}($|\s)`                            |
-|Assembly/Part  |`^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}(\s.*)?\.(?i)(SLDASM|SLDPRT)$`     |
+| Applied to    | Regex                                                                   |
+|---------------|-------------------------------------------------------------------------|
+| Parent Folder | `^(([0-9]{2}-)+[0-9]{2}`                                                |
+| Child Folder  | `^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}($&#124;\s)`                           |
+| Assembly/Part | `^([0-9]{2}(-[0-9]{2})*)-[0-9]{2}(\s.*)?\.(?i)(SLDASM&#124;SLDPRT)$`    |
 
 ## Other Information
 
